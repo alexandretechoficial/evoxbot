@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EVOX BOT - Inteligência Artificial para Cassino</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary-bg': '#050505',
+                        'gold': '#d4af37',
+                        'cyber': '#00f2ff',
+                    },
+                    fontFamily: {
+                        'orbitron': ['Orbitron', 'sans-serif'],
+                        'inter': ['Inter', 'sans-serif'],
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        /* Custom styles for cyberpunk effects */
+        .glassmorphism {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 242, 255, 0.2);
+        }
+        .glow-cyber {
+            box-shadow: 0 0 10px rgba(0, 242, 255, 0.5);
+        }
+        .glow-gold {
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+        }
+        .scanlines {
+            z-index: 1;
+        }
+        .scanlines::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(transparent 50%, rgba(0, 242, 255, 0.03) 50%);
+            background-size: 100% 4px;
+            pointer-events: none;
+        }
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .pulse-neon {
+            animation: pulse-neon 2s infinite;
+        }
+        @keyframes pulse-neon {
+            0%, 100% { box-shadow: 0 0 5px rgba(0, 242, 255, 0.5); }
+            50% { box-shadow: 0 0 20px rgba(0, 242, 255, 0.8); }
+        }
+        #codeCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0.3;
+        }
+        body > *:not(#codeCanvas):not(.payment-modal) {
+            position: relative;
+            z-index: 1;
+        }
+        /* Modal Payment Styles */
+        .payment-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 9999;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(5px);
+            overflow-y: auto;
+        }
+        .payment-modal.active {
+            display: flex !important;
+            align-items: flex-start;
+            justify-content: center;
+            padding-top: 2rem;
+        }
+        .payment-modal-content {
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+            z-index: 10000;
+        }
+        .payment-method {
+            transition: all 0.3s ease;
+        }
+        .payment-method:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 20px rgba(0, 242, 255, 0.6);
+        }
+        .payment-method.active {
+            border-color: #00f2ff;
+            box-shadow: 0 0 20px rgba(0, 242, 255, 0.8);
+        }
+        .copy-btn {
+            transition: all 0.2s ease;
+        }
+        .copy-btn:hover {
+            transform: scale(1.05);
+        }
+        .copy-btn.copied {
+            background-color: #00ff88;
+            color: #050505;
+        }
+    </style>
+</head>
+<body class="bg-primary-bg text-white font-inter overflow-x-hidden">
+    <!-- Code Rain Background Canvas -->
+    <canvas id="codeCanvas"></canvas>
+    <!-- Background scanlines -->
+    <div class="fixed inset-0 scanlines pointer-events-none"></div>
+
+    <!-- Hero Section -->
+    <section class="min-h-screen flex items-center justify-center px-4 py-16 relative">
+        <div class="text-center fade-in" id="hero">
+            <h1 class="text-4xl sm:text-6xl md:text-8xl font-orbitron font-bold text-gold mb-4 glow-gold">
+                EVOX BOT
+            </h1>
+            <p class="text-lg sm:text-xl md:text-2xl text-cyber mb-8">
+                Inteligência Artificial para Cassino
+            </p>
+            <p class="text-sm sm:text-base text-gray-300 max-w-2xl mx-auto">
+                Desenvolvido por Alexandre Tech - Revolucione suas apostas com tecnologia de ponta.
+            </p>
+        </div>
+    </section>
+
+    <!-- Seção de Vídeos -->
+    <section class="py-16 px-4">
+        <h2 class="text-2xl sm:text-3xl font-orbitron text-center mb-12 text-gold">MODOS DE OPERAÇÃO</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            <div class="glassmorphism rounded-lg p-4 fade-in hover:glow-cyber transition-all" id="video1">
+                <div class="aspect-[9/16] bg-gray-800 rounded-lg flex items-center justify-center mb-4 relative">
+                    <button class="absolute inset-0 flex items-center justify-center text-cyber text-4xl pulse-neon">
+                        ▶
+                    </button>
+                    <!-- Placeholder for video -->
+                    <div class="text-gray-400">Vídeo Placeholder</div>
+                </div>
+                <h3 class="text-xl font-orbitron text-cyber">MODO SINAIS</h3>
+                <p class="text-sm text-gray-300">Sinais precisos em tempo real para decisões rápidas.</p>
+            </div>
+            <div class="glassmorphism rounded-lg p-4 fade-in hover:glow-cyber transition-all" id="video2">
+                <div class="aspect-[9/16] bg-gray-800 rounded-lg flex items-center justify-center mb-4 relative">
+                    <button class="absolute inset-0 flex items-center justify-center text-cyber text-4xl pulse-neon">
+                        ▶
+                    </button>
+                    <!-- Placeholder for video -->
+                    <div class="text-gray-400">Vídeo Placeholder</div>
+                </div>
+                <h3 class="text-xl font-orbitron text-cyber">MODO ANÁLISE</h3>
+                <p class="text-sm text-gray-300">Análise profunda de padrões e tendências.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Central de Jogos -->
+    <section class="py-16 px-4">
+        <h2 class="text-2xl sm:text-3xl font-orbitron text-center mb-12 text-gold">CENTRAL DE JOGOS</h2>
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 max-w-6xl mx-auto">
+            <div class="glassmorphism rounded-lg p-4 text-center fade-in hover:glow-cyber transition-all" id="game1">
+                <div class="text-2xl mb-2">🎲</div>
+                <p class="text-sm">Bac Bo</p>
+            </div>
+            <div class="glassmorphism rounded-lg p-4 text-center fade-in hover:glow-cyber transition-all" id="game2">
+                <div class="text-2xl mb-2">⚡</div>
+                <p class="text-sm">Bac Bo Lightning</p>
+            </div>
+            <div class="glassmorphism rounded-lg p-4 text-center fade-in hover:glow-cyber transition-all" id="game3">
+                <div class="text-2xl mb-2">🎯</div>
+                <p class="text-sm">Mega Sic Bo</p>
+            </div>
+            <div class="glassmorphism rounded-lg p-4 text-center fade-in hover:glow-cyber transition-all" id="game4">
+                <div class="text-2xl mb-2">🃏</div>
+                <p class="text-sm">Baccarat 1</p>
+            </div>
+            <div class="glassmorphism rounded-lg p-4 text-center fade-in hover:glow-cyber transition-all" id="game5">
+                <div class="text-2xl mb-2">🏆</div>
+                <p class="text-sm">Super Trunfo</p>
+            </div>
+            <div class="glassmorphism rounded-lg p-4 text-center fade-in hover:glow-cyber transition-all" id="game6">
+                <div class="text-2xl mb-2">🔥</div>
+                <p class="text-sm">Blaze Double</p>
+            </div>
+            <div class="glassmorphism rounded-lg p-4 text-center fade-in hover:glow-cyber transition-all" id="game7">
+                <div class="text-2xl mb-2">⚽</div>
+                <p class="text-sm">Futebol Studio</p>
+            </div>
+            <div class="glassmorphism rounded-lg p-4 text-center fade-in hover:glow-cyber transition-all" id="game8">
+                <div class="text-2xl mb-2">💰</div>
+                <p class="text-sm">Infinity Dollar</p>
+            </div>
+            <div class="glassmorphism rounded-lg p-4 text-center fade-in hover:glow-cyber transition-all" id="game9">
+                <div class="text-2xl mb-2">🐉</div>
+                <p class="text-sm">Dragon Tiger</p>
+            </div>
+            <div class="glassmorphism rounded-lg p-4 text-center fade-in hover:glow-cyber transition-all" id="game10">
+                <div class="text-2xl mb-2">🎡</div>
+                <p class="text-sm">Mega Roulette</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tecnologias do Sistema -->
+    <section class="py-16 px-4">
+        <h2 class="text-2xl sm:text-3xl font-orbitron text-center mb-12 text-gold">TECNOLOGIAS DO SISTEMA</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 max-w-6xl mx-auto">
+            <div class="glassmorphism rounded-lg p-6 text-center fade-in hover:glow-cyber transition-all" id="tech1">
+                <div class="text-3xl mb-4">🔢</div>
+                <h3 class="font-orbitron text-cyber mb-2">Números</h3>
+                <p class="text-sm">Análise estatística avançada.</p>
+            </div>
+            <div class="glassmorphism rounded-lg p-6 text-center fade-in hover:glow-cyber transition-all" id="tech2">
+                <div class="text-3xl mb-4">📊</div>
+                <h3 class="font-orbitron text-cyber mb-2">Padrões</h3>
+                <p class="text-sm">Detecção de sequências.</p>
+            </div>
+            <div class="glassmorphism rounded-lg p-6 text-center fade-in hover:glow-cyber transition-all" id="tech3">
+                <div class="text-3xl mb-4">🧠</div>
+                <h3 class="font-orbitron text-cyber mb-2">Neural</h3>
+                <p class="text-sm">Estratégia Neural por Padrão.</p>
+            </div>
+            <div class="glassmorphism rounded-lg p-6 text-center fade-in hover:glow-cyber transition-all" id="tech4">
+                <div class="text-3xl mb-4">🤝</div>
+                <h3 class="font-orbitron text-cyber mb-2">Consenso</h3>
+                <p class="text-sm">Decisões coletivas inteligentes.</p>
+            </div>
+            <div class="glassmorphism rounded-lg p-6 text-center fade-in hover:glow-cyber transition-all" id="tech5">
+                <div class="text-3xl mb-4">🔄</div>
+                <h3 class="font-orbitron text-cyber mb-2">Adaptativa</h3>
+                <p class="text-sm">Adaptação em tempo real.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Oferta / Plano Premium -->
+    <section class="py-16 px-4">
+        <div class="max-w-md mx-auto glassmorphism rounded-lg p-8 text-center fade-in glow-gold" id="offer">
+            <h2 class="text-2xl font-orbitron text-gold mb-4">PLANO PREMIUM</h2>
+            <p class="text-3xl font-bold text-gold mb-4">R$ 89,90 / mês</p>
+            <ul class="text-sm text-gray-300 mb-6 space-y-2">
+                <li>✅ Acesso a TODOS os jogos</li>
+                <li>✅ 35 minutos de teste grátis antes da compra</li>
+            </ul>
+            <button onclick="openPaymentModal()" class="bg-cyber text-primary-bg px-6 py-3 rounded-lg font-bold hover:glow-cyber transition-all pulse-neon cursor-pointer">
+                ASSINAR AGORA
+            </button>
+        </div>
+    </section>
+
+    <!-- Payment Modal -->
+    <div id="paymentModal" class="payment-modal" onclick="closePaymentModalOnBackdrop(event)">
+        <div class="payment-modal-content" onclick="event.stopPropagation()">
+            <div class="glassmorphism rounded-lg p-6 mb-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-3xl font-orbitron text-gold glow-gold">Área de Pagamento</h2>
+                    <button onclick="closePaymentModal()" class="text-cyber hover:text-gold text-2xl font-bold transition-colors">×</button>
+                </div>
+                
+                <!-- Resumo do Pedido -->
+                <div class="glassmorphism rounded-lg p-6 mb-6">
+                    <h3 class="text-xl font-orbitron text-cyber mb-4">Resumo do Pedido</h3>
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-300">Plano Premium - Mensal</span>
+                            <span class="text-white font-bold">R$ 89,90</span>
+                        </div>
+                        <div class="flex justify-between items-center pt-3 border-t border-cyber/20">
+                            <span class="text-lg font-orbitron text-cyber">Total</span>
+                            <span class="text-xl font-bold text-gold">R$ 89,90</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Métodos de Pagamento -->
+                <div class="glassmorphism rounded-lg p-6 mb-6">
+                    <h3 class="text-xl font-orbitron text-cyber mb-6">Escolha a Forma de Pagamento</h3>
+                    
+                    <div class="space-y-4">
+                        <!-- PIX -->
+                        <div class="payment-method glassmorphism rounded-lg p-6 cursor-pointer" data-method="pix" onclick="selectPaymentMethod('pix')">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="flex items-center gap-4">
+                                    <div class="text-4xl">💳</div>
+                                    <div>
+                                        <h4 class="text-xl font-orbitron text-cyber">PIX</h4>
+                                        <p class="text-sm text-gray-400">Pagamento instantâneo</p>
+                                    </div>
+                                </div>
+                                <div class="w-6 h-6 rounded-full border-2 border-cyber flex items-center justify-center payment-radio" data-method="pix">
+                                    <div class="w-3 h-3 rounded-full bg-cyber hidden"></div>
+                                </div>
+                            </div>
+                            <div id="modal-pix-details" class="hidden mt-4 pt-4 border-t border-cyber/20">
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="block text-sm text-gray-400 mb-2">Chave PIX (E-mail)</label>
+                                        <div class="flex gap-2">
+                                            <input type="text" id="modal-pix-key" value="alexandre-tech@jim.com" readonly class="flex-1 bg-black/30 border border-cyber/30 rounded-lg px-4 py-3 text-cyber font-mono text-sm">
+                                            <button onclick="copyToClipboard('modal-pix-key', this)" class="copy-btn bg-cyber text-primary-bg px-4 py-3 rounded-lg font-bold hover:glow-cyber">
+                                                Copiar
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="bg-black/20 rounded-lg p-4 border border-cyber/20">
+                                        <p class="text-sm text-gray-300 mb-2">📋 <strong>Instruções:</strong></p>
+                                        <ol class="text-sm text-gray-400 space-y-1 list-decimal list-inside">
+                                            <li>Copie a chave PIX acima</li>
+                                            <li>Abra seu app de banco e faça o pagamento</li>
+                                            <li>Envie o comprovante para: <a href="https://t.me/Alexandre_tech" target="_blank" class="text-cyber hover:text-gold underline">@Alexandre_tech no Telegram</a></li>
+                                        </ol>
+                                    </div>
+                                    <a href="https://t.me/Alexandre_tech" target="_blank" class="block w-full bg-cyber text-primary-bg text-center py-3 rounded-lg font-bold hover:glow-cyber transition-all pulse-neon">
+                                        Enviar Comprovante via Telegram
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Cartão de Crédito -->
+                        <div class="payment-method glassmorphism rounded-lg p-6 cursor-pointer" data-method="card" onclick="selectPaymentMethod('card')">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="flex items-center gap-4">
+                                    <div class="text-4xl">💳</div>
+                                    <div>
+                                        <h4 class="text-xl font-orbitron text-cyber">Cartão de Crédito</h4>
+                                        <p class="text-sm text-gray-400">Até 12x sem juros</p>
+                                    </div>
+                                </div>
+                                <div class="w-6 h-6 rounded-full border-2 border-cyber flex items-center justify-center payment-radio" data-method="card">
+                                    <div class="w-3 h-3 rounded-full bg-cyber hidden"></div>
+                                </div>
+                            </div>
+                            <div id="modal-card-details" class="hidden mt-4 pt-4 border-t border-cyber/20">
+                                <a href="https://pay.infinitepay.io/alexandre-tech/VC1DLTAtUg-LiyoKZt2F-89,90" target="_blank" class="block w-full bg-cyber text-primary-bg text-center py-3 rounded-lg font-bold hover:glow-cyber transition-all pulse-neon">
+                                    Pagar com Cartão de Crédito
+                                </a>
+                                <p class="text-xs text-gray-400 text-center mt-2">Você será redirecionado para uma página segura de pagamento</p>
+                            </div>
+                        </div>
+
+                        <!-- Revolut -->
+                        <div class="payment-method glassmorphism rounded-lg p-6 cursor-pointer" data-method="revolut" onclick="selectPaymentMethod('revolut')">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="flex items-center gap-4">
+                                    <div class="text-4xl">🌍</div>
+                                    <div>
+                                        <h4 class="text-xl font-orbitron text-cyber">Revolut</h4>
+                                        <p class="text-sm text-gray-400">Pagamento Internacional</p>
+                                    </div>
+                                </div>
+                                <div class="w-6 h-6 rounded-full border-2 border-cyber flex items-center justify-center payment-radio" data-method="revolut">
+                                    <div class="w-3 h-3 rounded-full bg-cyber hidden"></div>
+                                </div>
+                            </div>
+                            <div id="modal-revolut-details" class="hidden mt-4 pt-4 border-t border-cyber/20">
+                                <div class="space-y-4">
+                                    <div class="bg-black/20 rounded-lg p-4 border border-cyber/20">
+                                        <div class="flex justify-between items-center mb-2">
+                                            <span class="text-gray-300">Valor do Plano:</span>
+                                            <span class="text-white">R$ 89,90</span>
+                                        </div>
+                                        <div class="flex justify-between items-center mb-2">
+                                            <span class="text-gray-300">Taxa Internacional:</span>
+                                            <span class="text-cyber">+ R$ 25,00</span>
+                                        </div>
+                                        <div class="flex justify-between items-center pt-2 border-t border-cyber/20">
+                                            <span class="font-bold text-gold">Total a Pagar:</span>
+                                            <span class="text-xl font-bold text-gold">R$ 114,90</span>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm text-gray-400 mb-2">Link Revolut</label>
+                                        <div class="flex gap-2">
+                                            <input type="text" id="modal-revolut-link" value="https://revolut.me/alexanl1jp" readonly class="flex-1 bg-black/30 border border-cyber/30 rounded-lg px-4 py-3 text-cyber font-mono text-sm">
+                                            <button onclick="copyToClipboard('modal-revolut-link', this)" class="copy-btn bg-cyber text-primary-bg px-4 py-3 rounded-lg font-bold hover:glow-cyber">
+                                                Copiar
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <a href="https://revolut.me/alexanl1jp" target="_blank" class="block w-full bg-cyber text-primary-bg text-center py-3 rounded-lg font-bold hover:glow-cyber transition-all pulse-neon">
+                                        Pagar via Revolut (R$ 114,90)
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- PayPal -->
+                        <div class="payment-method glassmorphism rounded-lg p-6 cursor-pointer" data-method="paypal" onclick="selectPaymentMethod('paypal')">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="flex items-center gap-4">
+                                    <div class="text-4xl">🌐</div>
+                                    <div>
+                                        <h4 class="text-xl font-orbitron text-cyber">PayPal</h4>
+                                        <p class="text-sm text-gray-400">Pagamento Internacional</p>
+                                    </div>
+                                </div>
+                                <div class="w-6 h-6 rounded-full border-2 border-cyber flex items-center justify-center payment-radio" data-method="paypal">
+                                    <div class="w-3 h-3 rounded-full bg-cyber hidden"></div>
+                                </div>
+                            </div>
+                            <div id="modal-paypal-details" class="hidden mt-4 pt-4 border-t border-cyber/20">
+                                <div class="space-y-4">
+                                    <div class="bg-black/20 rounded-lg p-4 border border-cyber/20">
+                                        <div class="flex justify-between items-center mb-2">
+                                            <span class="text-gray-300">Valor do Plano:</span>
+                                            <span class="text-white">R$ 89,90</span>
+                                        </div>
+                                        <div class="flex justify-between items-center mb-2">
+                                            <span class="text-gray-300">Taxa PayPal:</span>
+                                            <span class="text-cyber">+ R$ 25,00</span>
+                                        </div>
+                                        <div class="flex justify-between items-center pt-2 border-t border-cyber/20">
+                                            <span class="font-bold text-gold">Total a Pagar:</span>
+                                            <span class="text-xl font-bold text-gold">R$ 114,90</span>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm text-gray-400 mb-2">E-mail PayPal</label>
+                                        <div class="flex gap-2">
+                                            <input type="text" id="modal-paypal-email" value="alexandredepcerqueira19@gmail.com" readonly class="flex-1 bg-black/30 border border-cyber/30 rounded-lg px-4 py-3 text-cyber font-mono text-sm">
+                                            <button onclick="copyToClipboard('modal-paypal-email', this)" class="copy-btn bg-cyber text-primary-bg px-4 py-3 rounded-lg font-bold hover:glow-cyber">
+                                                Copiar
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="bg-black/20 rounded-lg p-4 border border-cyber/20">
+                                        <p class="text-sm text-gray-300 mb-2">📋 <strong>Instruções:</strong></p>
+                                        <ol class="text-sm text-gray-400 space-y-1 list-decimal list-inside">
+                                            <li>Faça login no PayPal</li>
+                                            <li>Envie o pagamento para o e-mail acima: <strong class="text-cyber">alexandredepcerqueira19@gmail.com</strong></li>
+                                            <li>Valor a enviar: <strong class="text-gold">R$ 114,90</strong></li>
+                                            <li>Envie o comprovante para: <a href="https://t.me/Alexandre_tech" target="_blank" class="text-cyber hover:text-gold underline">@Alexandre_tech no Telegram</a></li>
+                                        </ol>
+                                    </div>
+                                    <a href="https://t.me/Alexandre_tech" target="_blank" class="block w-full bg-cyber text-primary-bg text-center py-3 rounded-lg font-bold hover:glow-cyber transition-all pulse-neon">
+                                        Enviar Comprovante via Telegram
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Skrill -->
+                        <div class="payment-method glassmorphism rounded-lg p-6 cursor-pointer" data-method="skrill" onclick="selectPaymentMethod('skrill')">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="flex items-center gap-4">
+                                    <div class="text-4xl">💼</div>
+                                    <div>
+                                        <h4 class="text-xl font-orbitron text-cyber">Skrill</h4>
+                                        <p class="text-sm text-gray-400">Pagamento Internacional</p>
+                                    </div>
+                                </div>
+                                <div class="w-6 h-6 rounded-full border-2 border-cyber flex items-center justify-center payment-radio" data-method="skrill">
+                                    <div class="w-3 h-3 rounded-full bg-cyber hidden"></div>
+                                </div>
+                            </div>
+                            <div id="modal-skrill-details" class="hidden mt-4 pt-4 border-t border-cyber/20">
+                                <div class="space-y-4">
+                                    <div class="bg-black/20 rounded-lg p-4 border border-cyber/20">
+                                        <div class="flex justify-between items-center mb-2">
+                                            <span class="text-gray-300">Valor do Plano:</span>
+                                            <span class="text-white">R$ 89,90</span>
+                                        </div>
+                                        <div class="flex justify-between items-center mb-2">
+                                            <span class="text-gray-300">Taxa Skrill:</span>
+                                            <span class="text-cyber">+ R$ 30,00</span>
+                                        </div>
+                                        <div class="flex justify-between items-center pt-2 border-t border-cyber/20">
+                                            <span class="font-bold text-gold">Total a Pagar:</span>
+                                            <span class="text-xl font-bold text-gold">R$ 119,90</span>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm text-gray-400 mb-2">E-mail Skrill</label>
+                                        <div class="flex gap-2">
+                                            <input type="text" id="modal-skrill-email" value="alexandredepaulacerqueira@gmail.com" readonly class="flex-1 bg-black/30 border border-cyber/30 rounded-lg px-4 py-3 text-cyber font-mono text-sm">
+                                            <button onclick="copyToClipboard('modal-skrill-email', this)" class="copy-btn bg-cyber text-primary-bg px-4 py-3 rounded-lg font-bold hover:glow-cyber">
+                                                Copiar
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="bg-black/20 rounded-lg p-4 border border-cyber/20">
+                                        <p class="text-sm text-gray-300 mb-2">📋 <strong>Instruções:</strong></p>
+                                        <ol class="text-sm text-gray-400 space-y-1 list-decimal list-inside">
+                                            <li>Faça login no Skrill</li>
+                                            <li>Envie o pagamento para o e-mail acima: <strong class="text-cyber">alexandredepaulacerqueira@gmail.com</strong></li>
+                                            <li>Valor a enviar: <strong class="text-gold">R$ 119,90</strong></li>
+                                            <li>Envie o comprovante para: <a href="https://t.me/Alexandre_tech" target="_blank" class="text-cyber hover:text-gold underline">@Alexandre_tech no Telegram</a></li>
+                                        </ol>
+                                    </div>
+                                    <a href="https://t.me/Alexandre_tech" target="_blank" class="block w-full bg-cyber text-primary-bg text-center py-3 rounded-lg font-bold hover:glow-cyber transition-all pulse-neon">
+                                        Enviar Comprovante via Telegram
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Informações de Segurança -->
+                <div class="glassmorphism rounded-lg p-6">
+                    <div class="flex items-start gap-4">
+                        <div class="text-3xl">🔒</div>
+                        <div>
+                            <h4 class="text-lg font-orbitron text-cyber mb-2">Pagamento Seguro</h4>
+                            <p class="text-sm text-gray-400">Todos os pagamentos são processados de forma segura. Seus dados estão protegidos.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contato - Botão Flutuante -->
+    <a href="https://t.me/alexandre_tech" target="_blank" class="fixed bottom-4 right-4 bg-cyber text-primary-bg p-4 rounded-full glow-cyber hover:glow-cyber transition-all z-50">
+        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.161c-.18.717-.962 4.093-1.362 5.426-.168.562-.378.7-.584.715-.406.03-.711-.24-.711-.24s-.106-.08-.331-.497c-.411-.814-1.123-2.592-1.123-2.592s-.08-.24-.24-.12c-.16.12-.12.24-.12.24l.24 2.592c.04.24.04.48-.12.72-.16.24-.48.12-.48.12l-1.683-.84s-.24-.12-.48 0c-.24.12-.12.36-.12.36s.841 1.683 1.441 2.522c.6.84 1.321 1.081 1.321 1.081s.24.12.36 0c.12-.12.08-.36.08-.36s-.04-.72-.36-1.441c-.32-.721-.841-1.441-.841-1.441s-.08-.24-.24-.12c-.16.12-.12.24-.12.24l.841 1.441c.16.24.24.36.48.24.24-.12.24-.36.24-.36l-.24-2.592c-.04-.24-.04-.48.12-.72.16-.24.48-.12.48-.12l1.683.84s.24.12.48 0c.24-.12.12-.36.12-.36z"/>
+        </svg>
+    </a>
+
+    <!-- JavaScript for Animations -->
+    <script>
+        // Code Rain Animation (Matrix/Hacker Effect)
+        (function() {
+            const canvas = document.getElementById('codeCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            
+            // Caracteres para o código (hexadecimais, números, símbolos)
+            const chars = '0123456789ABCDEF<>{}[]()&|^%$#@!~`+-=*/_.,;:?';
+            const charArray = chars.split('');
+            
+            const fontSize = 14;
+            const columns = canvas.width / fontSize;
+            const drops = [];
+            
+            // Inicializa as colunas
+            for (let x = 0; x < columns; x++) {
+                drops[x] = Math.random() * -100;
+            }
+            
+            function draw() {
+                // Sobreposição semi-transparente para efeito de rastro
+                ctx.fillStyle = 'rgba(5, 5, 5, 0.04)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                // Cores cyber (ciano) e dourado
+                const colors = ['#00f2ff', '#d4af37', '#00ff88', '#ffffff'];
+                
+                ctx.font = fontSize + 'px monospace';
+                
+                for (let i = 0; i < drops.length; i++) {
+                    // Texto aleatório
+                    const text = charArray[Math.floor(Math.random() * charArray.length)];
+                    
+                    // Cor aleatória (mais ciano, menos dourado)
+                    const colorIndex = Math.random() > 0.8 ? 1 : (Math.random() > 0.5 ? 0 : 2);
+                    ctx.fillStyle = colors[colorIndex];
+                    
+                    // Desenha o caractere
+                    ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                    
+                    // Reseta a gota quando ela atinge o fundo
+                    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                        drops[i] = 0;
+                    }
+                    
+                    // Move a gota para baixo
+                    drops[i]++;
+                }
+            }
+            
+            // Ajusta canvas quando redimensiona a janela
+            window.addEventListener('resize', () => {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+                const newColumns = canvas.width / fontSize;
+                drops.length = 0;
+                for (let x = 0; x < newColumns; x++) {
+                    drops[x] = Math.random() * -100;
+                }
+            });
+            
+            // Inicia a animação
+            setInterval(draw, 50);
+        })();
+
+        // Intersection Observer for fade-in animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        // Observe all elements with fade-in class
+        document.querySelectorAll('.fade-in').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Payment Modal Functions
+        function openPaymentModal() {
+            const modal = document.getElementById('paymentModal');
+            console.log('Abrindo modal...', modal);
+            if (modal) {
+                modal.style.display = 'flex';
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            } else {
+                alert('Modal não encontrado!');
+            }
+        }
+
+        function closePaymentModal() {
+            const modal = document.getElementById('paymentModal');
+            modal.classList.remove('active');
+            modal.style.display = 'none';
+            document.body.style.overflow = '';
+        }
+
+        function closePaymentModalOnBackdrop(event) {
+            if (event.target.id === 'paymentModal') {
+                closePaymentModal();
+            }
+        }
+
+        // Close modal with ESC key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closePaymentModal();
+            }
+        });
+
+        // Payment Method Selection
+        function selectPaymentMethod(method) {
+            // Remove active class from all methods
+            const modal = document.getElementById('paymentModal');
+            modal.querySelectorAll('.payment-method').forEach(el => {
+                el.classList.remove('active');
+            });
+            modal.querySelectorAll('.payment-radio div').forEach(el => {
+                el.classList.add('hidden');
+            });
+            modal.querySelectorAll('[id^="modal-"][id$="-details"]').forEach(el => {
+                el.classList.add('hidden');
+            });
+
+            // Add active class to selected method
+            const selectedMethod = modal.querySelector(`[data-method="${method}"]`);
+            selectedMethod.classList.add('active');
+            const radio = selectedMethod.querySelector('.payment-radio div');
+            radio.classList.remove('hidden');
+            const details = document.getElementById(`modal-${method}-details`);
+            details.classList.remove('hidden');
+        }
+
+        // Copy to Clipboard
+        function copyToClipboard(inputId, button) {
+            const input = document.getElementById(inputId);
+            input.select();
+            input.setSelectionRange(0, 99999); // For mobile devices
+            
+            navigator.clipboard.writeText(input.value).then(() => {
+                const originalText = button.textContent;
+                button.textContent = 'Copiado!';
+                button.classList.add('copied');
+                
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.classList.remove('copied');
+                }, 2000);
+            }).catch(err => {
+                // Fallback for older browsers
+                document.execCommand('copy');
+                const originalText = button.textContent;
+                button.textContent = 'Copiado!';
+                button.classList.add('copied');
+                
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.classList.remove('copied');
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>
