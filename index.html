@@ -80,7 +80,7 @@
             pointer-events: none;
             opacity: 0.3;
         }
-        body > *:not(#codeCanvas):not(.payment-modal) {
+        body > *:not(#codeCanvas):not(.payment-modal):not(.strategies-modal) {
             position: relative;
             z-index: 1;
         }
@@ -132,6 +132,43 @@
             background-color: #00ff88;
             color: #050505;
         }
+        /* Strategies Modal Styles */
+        .strategies-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 9998;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(5px);
+            overflow-y: auto;
+        }
+        .strategies-modal.active {
+            display: flex !important;
+            align-items: flex-start;
+            justify-content: center;
+            padding-top: 1rem;
+            padding-bottom: 1rem;
+        }
+        .strategies-modal-content {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 1rem;
+            position: relative;
+            z-index: 9999;
+        }
+        @media (min-width: 640px) {
+            .strategies-modal.active {
+                padding-top: 2rem;
+                padding-bottom: 2rem;
+            }
+            .strategies-modal-content {
+                padding: 1.5rem;
+            }
+        }
     </style>
 </head>
 <body class="bg-primary-bg text-white font-inter overflow-x-hidden">
@@ -160,25 +197,17 @@
         <h2 class="text-2xl sm:text-3xl font-orbitron text-center mb-12 text-gold">MODOS DE OPERAÇÃO</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             <div class="glassmorphism rounded-lg p-4 fade-in hover:glow-cyber transition-all" id="video1">
-                <div class="aspect-[9/16] bg-gray-800 rounded-lg flex items-center justify-center mb-4 relative">
-                    <button class="absolute inset-0 flex items-center justify-center text-cyber text-4xl pulse-neon">
-                        ▶
-                    </button>
-                    <!-- Placeholder for video -->
-                    <div class="text-gray-400">Vídeo Placeholder</div>
+                <div class="aspect-[9/16] bg-gray-800 rounded-lg overflow-hidden mb-4 relative">
+                    <iframe src="https://player.vimeo.com/video/1151425586?badge=0&autopause=0&player_id=0&app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen class="w-full h-full absolute inset-0" title="Modo Sinais"></iframe>
                 </div>
                 <h3 class="text-xl font-orbitron text-cyber">MODO SINAIS</h3>
                 <p class="text-sm text-gray-300">Sinais precisos em tempo real para decisões rápidas.</p>
             </div>
             <div class="glassmorphism rounded-lg p-4 fade-in hover:glow-cyber transition-all" id="video2">
-                <div class="aspect-[9/16] bg-gray-800 rounded-lg flex items-center justify-center mb-4 relative">
-                    <button class="absolute inset-0 flex items-center justify-center text-cyber text-4xl pulse-neon">
-                        ▶
-                    </button>
-                    <!-- Placeholder for video -->
-                    <div class="text-gray-400">Vídeo Placeholder</div>
+                <div class="aspect-[9/16] bg-gray-800 rounded-lg overflow-hidden mb-4 relative">
+                    <iframe src="https://player.vimeo.com/video/1151426205?badge=0&autopause=0&player_id=0&app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen class="w-full h-full absolute inset-0" title="Modo Análise"></iframe>
                 </div>
-                <h3 class="text-xl font-orbitron text-cyber">MODO ANÁLISE</h3>
+                <h3 class="text-xl font-orbitron text-cyber">MODO ANÁLISE (RADAR)</h3>
                 <p class="text-sm text-gray-300">Análise profunda de padrões e tendências.</p>
             </div>
         </div>
@@ -233,32 +262,57 @@
 
     <!-- Tecnologias do Sistema -->
     <section class="py-16 px-4">
-        <h2 class="text-2xl sm:text-3xl font-orbitron text-center mb-12 text-gold">TECNOLOGIAS DO SISTEMA</h2>
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 max-w-6xl mx-auto">
-            <div class="glassmorphism rounded-lg p-6 text-center fade-in hover:glow-cyber transition-all" id="tech1">
-                <div class="text-3xl mb-4">🔢</div>
-                <h3 class="font-orbitron text-cyber mb-2">Números</h3>
-                <p class="text-sm">Análise estatística avançada.</p>
+        <div class="flex items-center justify-center gap-4 mb-12">
+            <h2 class="text-2xl sm:text-3xl font-orbitron text-center text-gold">TECNOLOGIAS DO SISTEMA</h2>
+            <button onclick="openStrategiesModal()" class="bg-cyber/20 hover:bg-cyber/40 text-cyber px-4 py-2 rounded-lg font-bold hover:glow-cyber transition-all text-sm sm:text-base" title="Como funcionam as estratégias">
+                ℹ️ Info
+            </button>
+        </div>
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-6 max-w-6xl mx-auto">
+            <div class="glassmorphism rounded-lg p-4 sm:p-6 text-center fade-in hover:glow-cyber transition-all" id="tech1">
+                <div class="text-2xl sm:text-3xl mb-2 sm:mb-4">🔢</div>
+                <h3 class="font-orbitron text-cyber mb-1 sm:mb-2 text-sm sm:text-base">Números</h3>
+                <p class="text-xs sm:text-sm">Análise estatística avançada.</p>
             </div>
-            <div class="glassmorphism rounded-lg p-6 text-center fade-in hover:glow-cyber transition-all" id="tech2">
-                <div class="text-3xl mb-4">📊</div>
-                <h3 class="font-orbitron text-cyber mb-2">Padrões</h3>
-                <p class="text-sm">Detecção de sequências.</p>
+            <div class="glassmorphism rounded-lg p-4 sm:p-6 text-center fade-in hover:glow-cyber transition-all" id="tech2">
+                <div class="text-2xl sm:text-3xl mb-2 sm:mb-4">📊</div>
+                <h3 class="font-orbitron text-cyber mb-1 sm:mb-2 text-sm sm:text-base">Padrões</h3>
+                <p class="text-xs sm:text-sm">Detecção de sequências.</p>
             </div>
-            <div class="glassmorphism rounded-lg p-6 text-center fade-in hover:glow-cyber transition-all" id="tech3">
-                <div class="text-3xl mb-4">🧠</div>
-                <h3 class="font-orbitron text-cyber mb-2">Neural</h3>
-                <p class="text-sm">Estratégia Neural por Padrão.</p>
+            <div class="glassmorphism rounded-lg p-4 sm:p-6 text-center fade-in hover:glow-cyber transition-all" id="tech3">
+                <div class="text-2xl sm:text-3xl mb-2 sm:mb-4">🧠</div>
+                <h3 class="font-orbitron text-cyber mb-1 sm:mb-2 text-sm sm:text-base">Neural</h3>
+                <p class="text-xs sm:text-sm">Estratégia Neural por Padrão.</p>
             </div>
-            <div class="glassmorphism rounded-lg p-6 text-center fade-in hover:glow-cyber transition-all" id="tech4">
-                <div class="text-3xl mb-4">🤝</div>
-                <h3 class="font-orbitron text-cyber mb-2">Consenso</h3>
-                <p class="text-sm">Decisões coletivas inteligentes.</p>
+            <div class="glassmorphism rounded-lg p-4 sm:p-6 text-center fade-in hover:glow-cyber transition-all" id="tech4">
+                <div class="text-2xl sm:text-3xl mb-2 sm:mb-4">🤝</div>
+                <h3 class="font-orbitron text-cyber mb-1 sm:mb-2 text-sm sm:text-base">Consenso</h3>
+                <p class="text-xs sm:text-sm">Decisões coletivas inteligentes.</p>
             </div>
-            <div class="glassmorphism rounded-lg p-6 text-center fade-in hover:glow-cyber transition-all" id="tech5">
-                <div class="text-3xl mb-4">🔄</div>
-                <h3 class="font-orbitron text-cyber mb-2">Adaptativa</h3>
-                <p class="text-sm">Adaptação em tempo real.</p>
+            <div class="glassmorphism rounded-lg p-4 sm:p-6 text-center fade-in hover:glow-cyber transition-all" id="tech5">
+                <div class="text-2xl sm:text-3xl mb-2 sm:mb-4">🔄</div>
+                <h3 class="font-orbitron text-cyber mb-1 sm:mb-2 text-sm sm:text-base">Adaptativa</h3>
+                <p class="text-xs sm:text-sm">Adaptação em tempo real.</p>
+            </div>
+            <div class="glassmorphism rounded-lg p-4 sm:p-6 text-center fade-in hover:glow-cyber transition-all" id="tech6">
+                <div class="text-2xl sm:text-3xl mb-2 sm:mb-4">🔄</div>
+                <h3 class="font-orbitron text-cyber mb-1 sm:mb-2 text-sm sm:text-base">Matriz</h3>
+                <p class="text-xs sm:text-sm">Transição de probabilidades.</p>
+            </div>
+            <div class="glassmorphism rounded-lg p-4 sm:p-6 text-center fade-in hover:glow-cyber transition-all" id="tech7">
+                <div class="text-2xl sm:text-3xl mb-2 sm:mb-4">🔁</div>
+                <h3 class="font-orbitron text-cyber mb-1 sm:mb-2 text-sm sm:text-base">Recorrência</h3>
+                <p class="text-xs sm:text-sm">Análise de histórico exato.</p>
+            </div>
+            <div class="glassmorphism rounded-lg p-4 sm:p-6 text-center fade-in hover:glow-cyber transition-all" id="tech8">
+                <div class="text-2xl sm:text-3xl mb-2 sm:mb-4">🔢</div>
+                <h3 class="font-orbitron text-cyber mb-1 sm:mb-2 text-sm sm:text-base">Posição Ciclada</h3>
+                <p class="text-xs sm:text-sm">Zonas e ciclos naturais.</p>
+            </div>
+            <div class="glassmorphism rounded-lg p-4 sm:p-6 text-center fade-in hover:glow-cyber transition-all" id="tech9">
+                <div class="text-2xl sm:text-3xl mb-2 sm:mb-4">⚡</div>
+                <h3 class="font-orbitron text-cyber mb-1 sm:mb-2 text-sm sm:text-base">Gale 1</h3>
+                <p class="text-xs sm:text-sm">Estratégia especial Gale.</p>
             </div>
         </div>
     </section>
@@ -541,12 +595,77 @@
         </div>
     </div>
 
-    <!-- Contato - Botão Flutuante -->
-    <a href="https://t.me/alexandre_tech" target="_blank" class="fixed bottom-4 right-4 bg-cyber text-primary-bg p-4 rounded-full glow-cyber hover:glow-cyber transition-all z-50">
-        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.161c-.18.717-.962 4.093-1.362 5.426-.168.562-.378.7-.584.715-.406.03-.711-.24-.711-.24s-.106-.08-.331-.497c-.411-.814-1.123-2.592-1.123-2.592s-.08-.24-.24-.12c-.16.12-.12.24-.12.24l.24 2.592c.04.24.04.48-.12.72-.16.24-.48.12-.48.12l-1.683-.84s-.24-.12-.48 0c-.24.12-.12.36-.12.36s.841 1.683 1.441 2.522c.6.84 1.321 1.081 1.321 1.081s.24.12.36 0c.12-.12.08-.36.08-.36s-.04-.72-.36-1.441c-.32-.721-.841-1.441-.841-1.441s-.08-.24-.24-.12c-.16.12-.12.24-.12.24l.841 1.441c.16.24.24.36.48.24.24-.12.24-.36.24-.36l-.24-2.592c-.04-.24-.04-.48.12-.72.16-.24.48-.12.48-.12l1.683.84s.24.12.48 0c.24-.12.12-.36.12-.36z"/>
-        </svg>
-    </a>
+    <!-- Strategies Info Modal -->
+    <div id="strategiesModal" class="strategies-modal" onclick="closeStrategiesModalOnBackdrop(event)">
+        <div class="strategies-modal-content" onclick="event.stopPropagation()">
+            <div class="glassmorphism rounded-lg p-4 sm:p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-2xl sm:text-3xl font-orbitron text-gold glow-gold">📚 Como Funcionam as Estratégias</h2>
+                    <button onclick="closeStrategiesModal()" class="text-cyber hover:text-gold text-3xl font-bold transition-colors">×</button>
+                </div>
+                
+                <div class="space-y-4 text-sm sm:text-base">
+                    <div class="glassmorphism rounded-lg p-4 border-l-4 border-cyber">
+                        <h3 class="font-orbitron text-cyber mb-2 text-base sm:text-lg">📈 Números</h3>
+                        <p class="text-gray-300 leading-relaxed">Analisa quais números saem mais vezes em cada cor. Quando um número volta a sair, prediz a cor que tem maior frequência histórica para aquele número.</p>
+                    </div>
+
+                    <div class="glassmorphism rounded-lg p-4 border-l-4 border-cyber">
+                        <h3 class="font-orbitron text-cyber mb-2 text-base sm:text-lg">🎨 Padrões de Cores</h3>
+                        <p class="text-gray-300 leading-relaxed">Observa sequências de cores recentes. Se padrões como V-A-V-A aparecem repetidamente, prediz qual cor quebra esse padrão.</p>
+                    </div>
+
+                    <div class="glassmorphism rounded-lg p-4 border-l-4 border-cyber">
+                        <h3 class="font-orbitron text-cyber mb-2 text-base sm:text-lg">🧠 Neural</h3>
+                        <p class="text-gray-300 leading-relaxed">Combina 4 fatores simultâneos: padrões numéricos, frequência de cores, momentum (tendência) e intervalo entre repetições. Cada fator vota, e o sinal só sai se houver consenso.</p>
+                    </div>
+
+                    <div class="glassmorphism rounded-lg p-4 border-l-4 border-cyber">
+                        <h3 class="font-orbitron text-cyber mb-2 text-base sm:text-lg">🤝 Consenso</h3>
+                        <p class="text-gray-300 leading-relaxed">Combina Números + Cores. Só gera sinal quando AMBAS estratégias concordam na mesma cor. Mais seguro, menos sinais, mas mais precisão.</p>
+                    </div>
+
+                    <div class="glassmorphism rounded-lg p-4 border-l-4 border-cyber">
+                        <h3 class="font-orbitron text-cyber mb-2 text-base sm:text-lg">🎯 Adaptativa</h3>
+                        <p class="text-gray-300 leading-relaxed">Análise multi-fatorial customizada por jogo. Cada jogo tem seus próprios fatores de análise (até 12 fatores diferentes). Sistema inteligente que se adapta ao comportamento de cada jogo.</p>
+                    </div>
+
+                    <div class="glassmorphism rounded-lg p-4 border-l-4 border-cyber">
+                        <h3 class="font-orbitron text-cyber mb-2 text-base sm:text-lg">🔄 Matriz de Transição</h3>
+                        <p class="text-gray-300 leading-relaxed">Mapeia probabilidade de transição entre cores (V→A, A→V, etc). Se V aparece 68% das vezes seguido de A, prediz A quando V sai.</p>
+                    </div>
+
+                    <div class="glassmorphism rounded-lg p-4 border-l-4 border-cyber">
+                        <h3 class="font-orbitron text-cyber mb-2 text-base sm:text-lg">🔄 Recorrência</h3>
+                        <p class="text-gray-300 leading-relaxed">Busca a última vez que o número exato saiu na cor exata. Se após aquela ocorrência veio cor X, prediz cor X novamente.</p>
+                    </div>
+
+                    <div class="glassmorphism rounded-lg p-4 border-l-4 border-cyber">
+                        <h3 class="font-orbitron text-cyber mb-2 text-base sm:text-lg">🔢 Posição Ciclada</h3>
+                        <p class="text-gray-300 leading-relaxed">Divide histórico em zonas de 20 resultados. Mapeia qual cor cada número prefere em cada zona. Prediz baseado na zona atual. Explora ciclos naturais do jogo.</p>
+                    </div>
+
+                    <div class="glassmorphism rounded-lg p-4 border-l-4 border-cyber">
+                        <h3 class="font-orbitron text-cyber mb-2 text-base sm:text-lg">⚡️ Estratégia Gale 1</h3>
+                        <p class="text-gray-300 leading-relaxed">Modo especial: observa silenciosamente o resultado SG (primeira entrada). Se SG acertar = não envia nada. Se SG errar = envia sinal para entrar em G1.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contato - Botões Flutuantes -->
+    <div class="fixed bottom-4 right-4 flex flex-col gap-3 z-50">
+        <a href="https://t.me/alexandredicefree" target="_blank" class="bg-gold hover:bg-gold/80 text-primary-bg p-3 sm:p-4 rounded-full glow-gold hover:glow-gold transition-all text-xs sm:text-sm font-bold flex items-center gap-2" title="Grupo Free">
+            <span>🎯</span>
+            <span class="hidden sm:inline">Free</span>
+        </a>
+        <a href="https://t.me/alexandre_tech" target="_blank" class="bg-cyber text-primary-bg p-3 sm:p-4 rounded-full glow-cyber hover:glow-cyber transition-all" title="Contato">
+            <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.161c-.18.717-.962 4.093-1.362 5.426-.168.562-.378.7-.584.715-.406.03-.711-.24-.711-.24s-.106-.08-.331-.497c-.411-.814-1.123-2.592-1.123-2.592s-.08-.24-.24-.12c-.16.12-.12.24-.12.24l.24 2.592c.04.24.04.48-.12.72-.16.24-.48.12-.48.12l-1.683-.84s-.24-.12-.48 0c-.24.12-.12.36-.12.36s.841 1.683 1.441 2.522c.6.84 1.321 1.081 1.321 1.081s.24.12.36 0c.12-.12.08-.36.08-.36s-.04-.72-.36-1.441c-.32-.721-.841-1.441-.841-1.441s-.08-.24-.24-.12c-.16.12-.12.24-.12.24l.841 1.441c.16.24.24.36.48.24.24-.12.24-.36.24-.36l-.24-2.592c-.04-.24-.04-.48.12-.72.16-.24.48-.12.48-.12l1.683.84s.24.12.48 0c.24-.12.12-.36.12-.36z"/>
+            </svg>
+        </a>
+    </div>
 
     <!-- JavaScript for Animations -->
     <script>
@@ -666,8 +785,35 @@
         document.addEventListener('keydown', function(event) {
             if (event.key === 'Escape') {
                 closePaymentModal();
+                closeStrategiesModal();
             }
         });
+
+        // Strategies Modal Functions
+        function openStrategiesModal() {
+            const modal = document.getElementById('strategiesModal');
+            console.log('Abrindo modal de estratégias...', modal);
+            if (modal) {
+                modal.style.display = 'flex';
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        function closeStrategiesModal() {
+            const modal = document.getElementById('strategiesModal');
+            if (modal) {
+                modal.classList.remove('active');
+                modal.style.display = 'none';
+                document.body.style.overflow = '';
+            }
+        }
+
+        function closeStrategiesModalOnBackdrop(event) {
+            if (event.target.id === 'strategiesModal') {
+                closeStrategiesModal();
+            }
+        }
 
         // Payment Method Selection
         function selectPaymentMethod(method) {
