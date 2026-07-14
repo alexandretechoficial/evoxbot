@@ -4,331 +4,273 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EVOX BOT - Inteligência Artificial para Cassino</title>
-    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
-    <!-- Tailwind CSS via CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    colors: {
-                        'primary-bg': '#050505',
-                        'gold': '#d4af37',
-                        'cyber': '#00f2ff',
-                    },
-                    fontFamily: {
-                        'orbitron': ['Orbitron', 'sans-serif'],
-                        'inter': ['Inter', 'sans-serif'],
-                    },
+                    colors: { 'primary-bg': '#050505', 'gold': '#d4af37', 'cyber': '#00f2ff' },
+                    fontFamily: { 'orbitron': ['Orbitron','sans-serif'], 'inter': ['Inter','sans-serif'] },
                 },
             },
         }
     </script>
     <style>
-        /* Custom styles for cyberpunk effects */
-        .glassmorphism {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(0, 242, 255, 0.2);
-        }
-        .glow-cyber {
-            box-shadow: 0 0 10px rgba(0, 242, 255, 0.5);
-        }
-        .glow-gold {
-            box-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
-        }
-        .scanlines {
-            z-index: 1;
-        }
-        .scanlines::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(transparent 50%, rgba(0, 242, 255, 0.03) 50%);
-            background-size: 100% 4px;
-            pointer-events: none;
-        }
-        .fade-in {
-            opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.6s ease, transform 0.6s ease;
-        }
-        .fade-in.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        .pulse-neon {
-            animation: pulse-neon 2s infinite;
-        }
-        @keyframes pulse-neon {
-            0%, 100% { box-shadow: 0 0 5px rgba(0, 242, 255, 0.5); }
-            50% { box-shadow: 0 0 20px rgba(0, 242, 255, 0.8); }
-        }
-        #codeCanvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-            pointer-events: none;
-            opacity: 0.3;
-        }
-        body > *:not(#codeCanvas):not(.payment-modal):not(.strategies-modal) {
-            position: relative;
-            z-index: 1;
-        }
-        /* Modal Payment Styles */
-        .payment-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            z-index: 9999;
-            background: rgba(0, 0, 0, 0.9);
-            backdrop-filter: blur(5px);
-            overflow-y: auto;
-        }
-        .payment-modal.active {
-            display: flex !important;
-            align-items: flex-start;
-            justify-content: center;
-            padding-top: 2rem;
-        }
-        .payment-modal-content {
-            width: 100%;
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 2rem;
-            position: relative;
-            z-index: 10000;
-        }
-        .payment-method {
-            transition: all 0.3s ease;
-        }
-        .payment-method:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 0 20px rgba(0, 242, 255, 0.6);
-        }
-        .payment-method.active {
-            border-color: #00f2ff;
-            box-shadow: 0 0 20px rgba(0, 242, 255, 0.8);
-        }
-        .copy-btn {
-            transition: all 0.2s ease;
-        }
-        .copy-btn:hover {
-            transform: scale(1.05);
-        }
-        .copy-btn.copied {
-            background-color: #00ff88;
-            color: #050505;
-        }
-        /* Strategies Modal Styles */
-        .strategies-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            z-index: 9998;
-            background: rgba(0, 0, 0, 0.95);
-            backdrop-filter: blur(5px);
-            overflow-y: auto;
-        }
-        .strategies-modal.active {
-            display: flex !important;
-            align-items: flex-start;
-            justify-content: center;
-            padding-top: 1rem;
-            padding-bottom: 1rem;
-        }
-        .strategies-modal-content {
-            width: 100%;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 1rem;
-            position: relative;
-            z-index: 9999;
-        }
-        @media (min-width: 640px) {
-            .strategies-modal.active {
-                padding-top: 2rem;
-                padding-bottom: 2rem;
-            }
-            .strategies-modal-content {
-                padding: 1.5rem;
-            }
-        }
+        .glassmorphism { background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); border: 1px solid rgba(0,242,255,0.2); }
+        .glow-cyber { box-shadow: 0 0 10px rgba(0,242,255,0.5); }
+        .glow-gold { box-shadow: 0 0 10px rgba(212,175,55,0.5); }
+        .scanlines { z-index:1; }
+        .scanlines::before { content:''; position:absolute; top:0; left:0; right:0; bottom:0; background:linear-gradient(transparent 50%,rgba(0,242,255,0.03) 50%); background-size:100% 4px; pointer-events:none; }
+        .fade-in { opacity:0; transform:translateY(20px); transition:opacity 0.6s ease,transform 0.6s ease; }
+        .fade-in.visible { opacity:1; transform:translateY(0); }
+        .pulse-neon { animation:pulse-neon 2s infinite; }
+        @keyframes pulse-neon { 0%,100%{box-shadow:0 0 5px rgba(0,242,255,0.5);} 50%{box-shadow:0 0 20px rgba(0,242,255,0.8);} }
+        #codeCanvas { position:fixed; top:0; left:0; width:100%; height:100%; z-index:0; pointer-events:none; opacity:0.3; }
+        body>*:not(#codeCanvas):not(.payment-modal):not(.strategies-modal) { position:relative; z-index:1; }
+        .payment-modal,.strategies-modal { display:none; position:fixed; top:0; left:0; right:0; bottom:0; z-index:9999; background:rgba(0,0,0,0.9); backdrop-filter:blur(5px); overflow-y:auto; }
+        .payment-modal.active,.strategies-modal.active { display:flex!important; align-items:flex-start; justify-content:center; padding-top:2rem; }
+        .payment-modal-content,.strategies-modal-content { width:100%; max-width:900px; margin:0 auto; padding:2rem; position:relative; z-index:10000; }
+        .payment-method { transition:all 0.3s ease; }
+        .payment-method:hover { transform:translateY(-2px); box-shadow:0 0 20px rgba(0,242,255,0.6); }
+        .payment-method.active { border-color:#00f2ff; box-shadow:0 0 20px rgba(0,242,255,0.8); }
+        .copy-btn { transition:all 0.2s ease; }
+        .copy-btn:hover { transform:scale(1.05); }
+        .copy-btn.copied { background-color:#00ff88; color:#050505; }
     </style>
 </head>
 <body class="bg-primary-bg text-white font-inter overflow-x-hidden">
-    <!-- Code Rain Background Canvas -->
     <canvas id="codeCanvas"></canvas>
-    <!-- Background scanlines -->
     <div class="fixed inset-0 scanlines pointer-events-none"></div>
 
     <!-- Hero Section -->
     <section class="min-h-screen flex items-center justify-center px-4 py-16 relative">
         <div class="text-center fade-in" id="hero">
-            <h1 class="text-4xl sm:text-6xl md:text-8xl font-orbitron font-bold text-gold mb-4 glow-gold">
-                EVOX BOT
-            </h1>
-            <p class="text-lg sm:text-xl md:text-2xl text-cyber mb-8">
-                Inteligência Artificial para Cassino
-            </p>
-            <p class="text-sm sm:text-base text-gray-300 max-w-2xl mx-auto">
-                Desenvolvido por Alexandre Tech - Revolucione suas apostas com tecnologia de ponta.
-            </p>
+            <h1 class="text-4xl sm:text-6xl md:text-8xl font-orbitron font-bold text-gold mb-4 glow-gold">EVOX BOT</h1>
+            <p class="text-lg sm:text-xl md:text-2xl text-cyber mb-8">Inteligência Artificial para Cassino</p>
+            <p class="text-sm sm:text-base text-gray-300 max-w-2xl mx-auto">Desenvolvido por Alexandre Tech — Sistema profissional de sinais e análise em tempo real.</p>
         </div>
     </section>
 
-    <!-- Seção de Vídeos -->
+    <!-- Modos de Operação -->
     <section class="py-16 px-4">
         <h2 class="text-2xl sm:text-3xl font-orbitron text-center mb-12 text-gold">MODOS DE OPERAÇÃO</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            <div class="glassmorphism rounded-lg p-4 fade-in hover:glow-cyber transition-all" id="video1">
-                <div class="aspect-[9/16] bg-gray-800 rounded-lg overflow-hidden mb-4 relative">
-                    <iframe src="https://player.vimeo.com/video/1151425586?badge=0&autopause=0&player_id=0&app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen class="w-full h-full absolute inset-0" title="Modo Sinais"></iframe>
-                </div>
-                <h3 class="text-xl font-orbitron text-cyber">MODO SINAIS</h3>
-                <p class="text-sm text-gray-300">Sinais precisos em tempo real para decisões rápidas.</p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+            <!-- Modo Sinais -->
+            <div class="glassmorphism rounded-lg p-6 fade-in hover:glow-cyber transition-all">
+                <div class="text-3xl mb-4">🎯</div>
+                <h3 class="text-xl font-orbitron text-cyber mb-3">MODO SINAIS I.A</h3>
+                <p class="text-sm text-gray-300 mb-3">Sinais precisos em tempo real. Escolha o jogo, a estratégia e o gale. Receba entradas manuais ou automáticas.</p>
+                <ul class="text-xs text-gray-400 space-y-1">
+                    <li>✅ 19 estratégias de I.A</li>
+                    <li>✅ Pacotes automáticos (3, 5 ou 10 sinais)</li>
+                    <li>✅ Validação GREEN/LOSS em tempo real</li>
+                </ul>
             </div>
-            <div class="glassmorphism rounded-lg p-4 fade-in hover:glow-cyber transition-all" id="video2">
-                <div class="aspect-[9/16] bg-gray-800 rounded-lg overflow-hidden mb-4 relative">
-                    <iframe src="https://player.vimeo.com/video/1151426205?badge=0&autopause=0&player_id=0&app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen class="w-full h-full absolute inset-0" title="Modo Análise"></iframe>
+            <!-- Análise Especial -->
+            <div class="glassmorphism rounded-lg p-6 fade-in hover:glow-cyber transition-all">
+                <div class="text-3xl mb-4">🔮</div>
+                <h3 class="text-xl font-orbitron text-cyber mb-3">ANÁLISE ESPECIAL</h3>
+                <p class="text-sm text-gray-300 mb-3">Confiança em tempo real a cada rodada. 12 fatores combinados mostram qual resultado tem mais chance de sair.</p>
+                <ul class="text-xs text-gray-400 space-y-1">
+                    <li>✅ 12 fatores por rodada</li>
+                    <li>✅ Ranking semáforo (roleta)</li>
+                    <li>✅ Top 5 jogos em tempo real</li>
+                    <li>✅ Gatilhos por mercado</li>
+                </ul>
+            </div>
+            <!-- Modo Sniper -->
+            <div class="glassmorphism rounded-lg p-6 fade-in hover:glow-cyber transition-all">
+                <div class="text-3xl mb-4">🎯</div>
+                <h3 class="text-xl font-orbitron text-cyber mb-3">MODO SNIPER</h3>
+                <p class="text-sm text-gray-300 mb-3">O bot monitora em silêncio e te avisa no celular APENAS quando uma oportunidade forte aparecer.</p>
+                <ul class="text-xs text-gray-400 space-y-1">
+                    <li>✅ Alerta push no celular</li>
+                    <li>✅ Confiança mínima personalizável</li>
+                    <li>✅ Não precisa ficar olhando o bot</li>
+                </ul>
+            </div>
+            <!-- Lista de Sinais -->
+            <div class="glassmorphism rounded-lg p-6 fade-in hover:glow-cyber transition-all">
+                <div class="text-3xl mb-4">📋</div>
+                <h3 class="text-xl font-orbitron text-cyber mb-3">LISTA DE SINAIS</h3>
+                <p class="text-sm text-gray-300 mb-3">Gera lista programada de sinais pra você usar quando quiser.</p>
+                <ul class="text-xs text-gray-400 space-y-1">
+                    <li>✅ Lista automática</li>
+                    <li>✅ Escolha jogo e estratégia</li>
+                </ul>
+            </div>
+            <!-- Consultor de Banca -->
+            <div class="glassmorphism rounded-lg p-6 fade-in hover:glow-cyber transition-all">
+                <div class="text-3xl mb-4">💰</div>
+                <h3 class="text-xl font-orbitron text-cyber mb-3">CONSULTOR DE BANCA</h3>
+                <p class="text-sm text-gray-300 mb-3">Gestão de bankroll — calcula quanto apostar em cada entrada de acordo com sua banca.</p>
+                <ul class="text-xs text-gray-400 space-y-1">
+                    <li>✅ Gerenciamento inteligente</li>
+                    <li>✅ Proteja seu capital</li>
+                </ul>
+            </div>
+            <!-- Outros Mercados -->
+            <div class="glassmorphism rounded-lg p-6 fade-in hover:glow-cyber transition-all">
+                <div class="text-3xl mb-4">📊</div>
+                <h3 class="text-xl font-orbitron text-cyber mb-3">OUTROS MERCADOS</h3>
+                <p class="text-sm text-gray-300 mb-3">Aviator, Bitcoin OTC, EUR/USD — sinais pra mercados alternativos.</p>
+                <ul class="text-xs text-gray-400 space-y-1">
+                    <li>✅ Crash games</li>
+                    <li>✅ Mercado financeiro</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Como Funciona a Análise Especial -->
+    <section class="py-16 px-4">
+        <h2 class="text-2xl sm:text-3xl font-orbitron text-center mb-12 text-gold">COMO FUNCIONA A ANÁLISE ESPECIAL</h2>
+        <div class="max-w-4xl mx-auto">
+            <div class="glassmorphism rounded-lg p-6 sm:p-8 fade-in">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                        <h3 class="text-xl font-orbitron text-cyber mb-4">🎲 Jogos de Mesa</h3>
+                        <p class="text-sm text-gray-300 mb-4">A cada rodada, 12 fatores analisam o jogo e mostram a confiança de qual cor vai sair:</p>
+                        <div class="bg-black/30 rounded-lg p-4 font-mono text-xs leading-relaxed">
+                            <span class="text-gold">📊 CONFIANÇA PRÓXIMA RODADA:</span><br>
+                            🔵 Azul: █████████░ 72%<br>
+                            🔴 Verm: ███░░░░░░░ 28%<br><br>
+                            <span class="text-gold">🏆 Confiança: 🔵 Azul (72%)</span><br><br>
+                            <span class="text-gray-400">📊 Ranking: #2 de 13</span><br>
+                            <span class="text-gray-400">💡 Recomendação: entre acima de 60%</span>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-orbitron text-cyber mb-4">🎡 Roleta</h3>
+                        <p class="text-sm text-gray-300 mb-4">Ranking semáforo mostra a melhor aposta de cada mercado rankeada:</p>
+                        <div class="bg-black/30 rounded-lg p-4 font-mono text-xs leading-relaxed">
+                            <span class="text-gold">🎯 ONDE APOSTAR: após 11🔴</span><br><br>
+                            🟢 85% — Combo Coluna 1+2<br>
+                            🟢 81% — Combo Dúzia 1+2<br>
+                            🟡 60% — Par<br>
+                            🟡 56% — Vermelho<br>
+                            🟡 55% — Coluna 1<br>
+                            🟡 54% — Baixos (1-18)<br><br>
+                            <span class="text-gray-400">⚠️ Isso é análise, não é sinal.</span>
+                        </div>
+                    </div>
                 </div>
-                <h3 class="text-xl font-orbitron text-cyber">MODO ANÁLISE (RADAR)</h3>
-                <p class="text-sm text-gray-300">Análise profunda de padrões e tendências.</p>
+                <div class="mt-8 pt-6 border-t border-cyber/20">
+                    <h4 class="font-orbitron text-cyber mb-4">📋 Os 12 Fatores de Análise:</h4>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                        <div class="bg-black/20 rounded-lg p-3 text-center"><span class="text-xs">🎨 Padrões</span></div>
+                        <div class="bg-black/20 rounded-lg p-3 text-center"><span class="text-xs">🛣️ Roads</span></div>
+                        <div class="bg-black/20 rounded-lg p-3 text-center"><span class="text-xs">📈 Tendência</span></div>
+                        <div class="bg-black/20 rounded-lg p-3 text-center"><span class="text-xs">🔢 Números</span></div>
+                        <div class="bg-black/20 rounded-lg p-3 text-center"><span class="text-xs">🔄 Markov</span></div>
+                        <div class="bg-black/20 rounded-lg p-3 text-center"><span class="text-xs">⏳ Intervalo</span></div>
+                        <div class="bg-black/20 rounded-lg p-3 text-center"><span class="text-xs">📊 Momentum</span></div>
+                        <div class="bg-black/20 rounded-lg p-3 text-center"><span class="text-xs">🔄 Recorrência</span></div>
+                        <div class="bg-black/20 rounded-lg p-3 text-center"><span class="text-xs">📐 Grade</span></div>
+                        <div class="bg-black/20 rounded-lg p-3 text-center"><span class="text-xs">🧠 Neural</span></div>
+                        <div class="bg-black/20 rounded-lg p-3 text-center"><span class="text-xs">📉 Regressão</span></div>
+                        <div class="bg-black/20 rounded-lg p-3 text-center"><span class="text-xs">🌊 Quebra Streak</span></div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
 
     <!-- Central de Jogos -->
     <section class="py-16 px-4">
-        <h2 class="text-2xl sm:text-3xl font-orbitron text-center mb-12 text-gold">CENTRAL DE JOGOS</h2>
-        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 max-w-6xl mx-auto">
-            <div class="glassmorphism rounded-lg p-4 text-center fade-in hover:glow-cyber transition-all" id="game1">
-                <div class="text-2xl mb-2">🎲</div>
-                <p class="text-sm">Bac Bo</p>
+        <h2 class="text-2xl sm:text-3xl font-orbitron text-center mb-4 text-gold">CENTRAL DE JOGOS</h2>
+        <p class="text-center text-gray-400 text-sm mb-12">25+ jogos suportados em tempo real</p>
+
+        <!-- Jogos de Mesa -->
+        <div class="max-w-6xl mx-auto mb-10">
+            <h3 class="text-lg font-orbitron text-cyber mb-4 ml-2">🎲 Jogos de Mesa</h3>
+            <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3">
+                <div class="glassmorphism rounded-lg p-3 text-center fade-in hover:glow-cyber transition-all"><div class="text-xl mb-1">🎲</div><p class="text-xs">Bac Bo</p></div>
+                <div class="glassmorphism rounded-lg p-3 text-center fade-in hover:glow-cyber transition-all"><div class="text-xl mb-1">🎲</div><p class="text-xs">Bac Bo BR</p></div>
+                <div class="glassmorphism rounded-lg p-3 text-center fade-in hover:glow-cyber transition-all"><div class="text-xl mb-1">🎰</div><p class="text-xs">Mega Sic Bac</p></div>
+                <div class="glassmorphism rounded-lg p-3 text-center fade-in hover:glow-cyber transition-all"><div class="text-xl mb-1">🃏</div><p class="text-xs">Baccarat 1</p></div>
+                <div class="glassmorphism rounded-lg p-3 text-center fade-in hover:glow-cyber transition-all"><div class="text-xl mb-1">🃏</div><p class="text-xs">Speed Baccarat</p></div>
+                <div class="glassmorphism rounded-lg p-3 text-center fade-in hover:glow-cyber transition-all"><div class="text-xl mb-1">🐉</div><p class="text-xs">Dragon Tiger</p></div>
+                <div class="glassmorphism rounded-lg p-3 text-center fade-in hover:glow-cyber transition-all"><div class="text-xl mb-1">⚽</div><p class="text-xs">Futebol Studio</p></div>
+                <div class="glassmorphism rounded-lg p-3 text-center fade-in hover:glow-cyber transition-all"><div class="text-xl mb-1">⚽</div><p class="text-xs">Futebol BR</p></div>
+                <div class="glassmorphism rounded-lg p-3 text-center fade-in hover:glow-cyber transition-all"><div class="text-xl mb-1">⚽</div><p class="text-xs">Futebol Espanhol</p></div>
+                <div class="glassmorphism rounded-lg p-3 text-center fade-in hover:glow-cyber transition-all"><div class="text-xl mb-1">🔥</div><p class="text-xs">Blaze Double</p></div>
+                <div class="glassmorphism rounded-lg p-3 text-center fade-in hover:glow-cyber transition-all"><div class="text-xl mb-1">⚡</div><p class="text-xs">Super Trunfo</p></div>
+                <div class="glassmorphism rounded-lg p-3 text-center fade-in hover:glow-cyber transition-all"><div class="text-xl mb-1">💵</div><p class="text-xs">Dolar Pro</p></div>
+                <div class="glassmorphism rounded-lg p-3 text-center fade-in hover:glow-cyber transition-all"><div class="text-xl mb-1">🎲</div><p class="text-xs">Sic Bo</p></div>
+                <div class="glassmorphism rounded-lg p-3 text-center fade-in hover:glow-cyber transition-all"><div class="text-xl mb-1">⚡</div><p class="text-xs">Lightning Dice</p></div>
+                <div class="glassmorphism rounded-lg p-3 text-center fade-in hover:glow-cyber transition-all"><div class="text-xl mb-1">🎴</div><p class="text-xs">Fan Tan</p></div>
             </div>
-            <div class="glassmorphism rounded-lg p-4 text-center fade-in hover:glow-cyber transition-all" id="game2">
-                <div class="text-2xl mb-2">⚡</div>
-                <p class="text-sm">Bac Bo Lightning</p>
+        </div>
+
+        <!-- Roleta -->
+        <div class="max-w-6xl mx-auto mb-10">
+            <h3 class="text-lg font-orbitron text-cyber mb-4 ml-2">🎡 Roleta</h3>
+            <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3">
+                <div class="glassmorphism rounded-lg p-3 text-center fade-in hover:glow-cyber transition-all"><div class="text-xl mb-1">🎡</div><p class="text-xs">Mega Roulette</p></div>
+                <div class="glassmorphism rounded-lg p-3 text-center fade-in hover:glow-cyber transition-all"><div class="text-xl mb-1">🎡</div><p class="text-xs">Immersive Roulette</p></div>
+                <div class="glassmorphism rounded-lg p-3 text-center fade-in hover:glow-cyber transition-all"><div class="text-xl mb-1">🎡</div><p class="text-xs">Roleta Brasileira</p></div>
             </div>
-            <div class="glassmorphism rounded-lg p-4 text-center fade-in hover:glow-cyber transition-all" id="game3">
-                <div class="text-2xl mb-2">🎯</div>
-                <p class="text-sm">Mega Sic Bo</p>
-            </div>
-            <div class="glassmorphism rounded-lg p-4 text-center fade-in hover:glow-cyber transition-all" id="game4">
-                <div class="text-2xl mb-2">🃏</div>
-                <p class="text-sm">Baccarat 1</p>
-            </div>
-            <div class="glassmorphism rounded-lg p-4 text-center fade-in hover:glow-cyber transition-all" id="game5">
-                <div class="text-2xl mb-2">🏆</div>
-                <p class="text-sm">Super Trunfo</p>
-            </div>
-            <div class="glassmorphism rounded-lg p-4 text-center fade-in hover:glow-cyber transition-all" id="game6">
-                <div class="text-2xl mb-2">🔥</div>
-                <p class="text-sm">Blaze Double</p>
-            </div>
-            <div class="glassmorphism rounded-lg p-4 text-center fade-in hover:glow-cyber transition-all" id="game7">
-                <div class="text-2xl mb-2">⚽</div>
-                <p class="text-sm">Futebol Studio</p>
-            </div>
-            <div class="glassmorphism rounded-lg p-4 text-center fade-in hover:glow-cyber transition-all" id="game8">
-                <div class="text-2xl mb-2">💰</div>
-                <p class="text-sm">Infinity Dollar</p>
-            </div>
-            <div class="glassmorphism rounded-lg p-4 text-center fade-in hover:glow-cyber transition-all" id="game9">
-                <div class="text-2xl mb-2">🐉</div>
-                <p class="text-sm">Dragon Tiger</p>
-            </div>
-            <div class="glassmorphism rounded-lg p-4 text-center fade-in hover:glow-cyber transition-all" id="game10">
-                <div class="text-2xl mb-2">🎡</div>
-                <p class="text-sm">Mega Roulette</p>
+        </div>
+
+        <!-- Aviator / Crash / Financeiro -->
+        <div class="max-w-6xl mx-auto">
+            <h3 class="text-lg font-orbitron text-cyber mb-4 ml-2">🚀 Aviator & Mercados</h3>
+            <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3">
+                <div class="glassmorphism rounded-lg p-3 text-center fade-in hover:glow-cyber transition-all"><div class="text-xl mb-1">🚀</div><p class="text-xs">Aviator</p></div>
+                <div class="glassmorphism rounded-lg p-3 text-center fade-in hover:glow-cyber transition-all"><div class="text-xl mb-1">🎣</div><p class="text-xs">Big Bass Crash</p></div>
+                <div class="glassmorphism rounded-lg p-3 text-center fade-in hover:glow-cyber transition-all"><div class="text-xl mb-1">📈</div><p class="text-xs">EUR/USD OTC</p></div>
+                <div class="glassmorphism rounded-lg p-3 text-center fade-in hover:glow-cyber transition-all"><div class="text-xl mb-1">₿</div><p class="text-xs">Bitcoin OTC</p></div>
             </div>
         </div>
     </section>
 
-    <!-- Tecnologias do Sistema -->
+    <!-- Estratégias de I.A -->
     <section class="py-16 px-4">
         <div class="flex items-center justify-center gap-4 mb-12">
-            <h2 class="text-2xl sm:text-3xl font-orbitron text-center text-gold">TECNOLOGIAS DO SISTEMA</h2>
-            <button onclick="openStrategiesModal()" class="bg-cyber/20 hover:bg-cyber/40 text-cyber px-4 py-2 rounded-lg font-bold hover:glow-cyber transition-all text-sm sm:text-base" title="Como funcionam as estratégias">
-                ℹ️ Info
-            </button>
+            <h2 class="text-2xl sm:text-3xl font-orbitron text-center text-gold">19 ESTRATÉGIAS DE I.A</h2>
+            <button onclick="openStrategiesModal()" class="bg-cyber/20 hover:bg-cyber/40 text-cyber px-4 py-2 rounded-lg font-bold hover:glow-cyber transition-all text-sm" title="Como funcionam">ℹ️ Info</button>
         </div>
-        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-6 max-w-6xl mx-auto">
-            <div class="glassmorphism rounded-lg p-4 sm:p-6 text-center fade-in hover:glow-cyber transition-all" id="tech1">
-                <div class="text-2xl sm:text-3xl mb-2 sm:mb-4">🔢</div>
-                <h3 class="font-orbitron text-cyber mb-1 sm:mb-2 text-sm sm:text-base">Números</h3>
-                <p class="text-xs sm:text-sm">Análise estatística avançada.</p>
-            </div>
-            <div class="glassmorphism rounded-lg p-4 sm:p-6 text-center fade-in hover:glow-cyber transition-all" id="tech2">
-                <div class="text-2xl sm:text-3xl mb-2 sm:mb-4">📊</div>
-                <h3 class="font-orbitron text-cyber mb-1 sm:mb-2 text-sm sm:text-base">Padrões</h3>
-                <p class="text-xs sm:text-sm">Detecção de sequências.</p>
-            </div>
-            <div class="glassmorphism rounded-lg p-4 sm:p-6 text-center fade-in hover:glow-cyber transition-all" id="tech3">
-                <div class="text-2xl sm:text-3xl mb-2 sm:mb-4">🧠</div>
-                <h3 class="font-orbitron text-cyber mb-1 sm:mb-2 text-sm sm:text-base">Neural</h3>
-                <p class="text-xs sm:text-sm">Estratégia Neural por Padrão.</p>
-            </div>
-            <div class="glassmorphism rounded-lg p-4 sm:p-6 text-center fade-in hover:glow-cyber transition-all" id="tech4">
-                <div class="text-2xl sm:text-3xl mb-2 sm:mb-4">🤝</div>
-                <h3 class="font-orbitron text-cyber mb-1 sm:mb-2 text-sm sm:text-base">Consenso</h3>
-                <p class="text-xs sm:text-sm">Decisões coletivas inteligentes.</p>
-            </div>
-            <div class="glassmorphism rounded-lg p-4 sm:p-6 text-center fade-in hover:glow-cyber transition-all" id="tech5">
-                <div class="text-2xl sm:text-3xl mb-2 sm:mb-4">🔄</div>
-                <h3 class="font-orbitron text-cyber mb-1 sm:mb-2 text-sm sm:text-base">Adaptativa</h3>
-                <p class="text-xs sm:text-sm">Adaptação em tempo real.</p>
-            </div>
-            <div class="glassmorphism rounded-lg p-4 sm:p-6 text-center fade-in hover:glow-cyber transition-all" id="tech6">
-                <div class="text-2xl sm:text-3xl mb-2 sm:mb-4">🔄</div>
-                <h3 class="font-orbitron text-cyber mb-1 sm:mb-2 text-sm sm:text-base">Matriz</h3>
-                <p class="text-xs sm:text-sm">Transição de probabilidades.</p>
-            </div>
-            <div class="glassmorphism rounded-lg p-4 sm:p-6 text-center fade-in hover:glow-cyber transition-all" id="tech7">
-                <div class="text-2xl sm:text-3xl mb-2 sm:mb-4">🔁</div>
-                <h3 class="font-orbitron text-cyber mb-1 sm:mb-2 text-sm sm:text-base">Recorrência</h3>
-                <p class="text-xs sm:text-sm">Análise de histórico exato.</p>
-            </div>
-            <div class="glassmorphism rounded-lg p-4 sm:p-6 text-center fade-in hover:glow-cyber transition-all" id="tech8">
-                <div class="text-2xl sm:text-3xl mb-2 sm:mb-4">🔢</div>
-                <h3 class="font-orbitron text-cyber mb-1 sm:mb-2 text-sm sm:text-base">Posição Ciclada</h3>
-                <p class="text-xs sm:text-sm">Zonas e ciclos naturais.</p>
-            </div>
-            <div class="glassmorphism rounded-lg p-4 sm:p-6 text-center fade-in hover:glow-cyber transition-all" id="tech9">
-                <div class="text-2xl sm:text-3xl mb-2 sm:mb-4">⚡</div>
-                <h3 class="font-orbitron text-cyber mb-1 sm:mb-2 text-sm sm:text-base">Gale 1</h3>
-                <p class="text-xs sm:text-sm">Estratégia especial Gale.</p>
-            </div>
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 max-w-6xl mx-auto">
+            <div class="glassmorphism rounded-lg p-3 text-center fade-in hover:glow-cyber transition-all"><span class="text-xs">🔢 Números</span></div>
+            <div class="glassmorphism rounded-lg p-3 text-center fade-in hover:glow-cyber transition-all"><span class="text-xs">🎨 Padrões de Cores</span></div>
+            <div class="glassmorphism rounded-lg p-3 text-center fade-in hover:glow-cyber transition-all"><span class="text-xs">🧠 Neural</span></div>
+            <div class="glassmorphism rounded-lg p-3 text-center fade-in hover:glow-cyber transition-all"><span class="text-xs">🧠 Neural 2.0</span></div>
+            <div class="glassmorphism rounded-lg p-3 text-center fade-in hover:glow-cyber transition-all"><span class="text-xs">🤝 Consenso</span></div>
+            <div class="glassmorphism rounded-lg p-3 text-center fade-in hover:glow-cyber transition-all"><span class="text-xs">🧠 I.A Adaptativa</span></div>
+            <div class="glassmorphism rounded-lg p-3 text-center fade-in hover:glow-cyber transition-all"><span class="text-xs">🔄 Matriz Transição</span></div>
+            <div class="glassmorphism rounded-lg p-3 text-center fade-in hover:glow-cyber transition-all"><span class="text-xs">🔄 Recorrência</span></div>
+            <div class="glassmorphism rounded-lg p-3 text-center fade-in hover:glow-cyber transition-all"><span class="text-xs">🔢 Posição Ciclada</span></div>
+            <div class="glassmorphism rounded-lg p-3 text-center fade-in hover:glow-cyber transition-all"><span class="text-xs">🛣️ Roads</span></div>
+            <div class="glassmorphism rounded-lg p-3 text-center fade-in hover:glow-cyber transition-all"><span class="text-xs">🔢 Number Roads</span></div>
+            <div class="glassmorphism rounded-lg p-3 text-center fade-in hover:glow-cyber transition-all"><span class="text-xs">🔄 Reversão Fraqueza</span></div>
+            <div class="glassmorphism rounded-lg p-3 text-center fade-in hover:glow-cyber transition-all"><span class="text-xs">🔮 Ressonância</span></div>
+            <div class="glassmorphism rounded-lg p-3 text-center fade-in hover:glow-cyber transition-all"><span class="text-xs">🐉 Peso Numérico</span></div>
+            <div class="glassmorphism rounded-lg p-3 text-center fade-in hover:glow-cyber transition-all"><span class="text-xs">↗️ Grade Diagonal</span></div>
+            <div class="glassmorphism rounded-lg p-3 text-center fade-in hover:glow-cyber transition-all"><span class="text-xs">↕️ Grade Espelho</span></div>
+            <div class="glassmorphism rounded-lg p-3 text-center fade-in hover:glow-cyber transition-all"><span class="text-xs">↔️ Grade Repetição</span></div>
+            <div class="glassmorphism rounded-lg p-3 text-center fade-in hover:glow-cyber transition-all"><span class="text-xs">📐 Grade Adjacente</span></div>
+            <div class="glassmorphism rounded-lg p-3 text-center fade-in hover:glow-cyber transition-all"><span class="text-xs">♾️ Infinity</span></div>
         </div>
     </section>
 
-    <!-- Oferta / Plano Premium -->
+    <!-- Plano Premium -->
     <section class="py-16 px-4">
         <div class="max-w-md mx-auto glassmorphism rounded-lg p-8 text-center fade-in glow-gold" id="offer">
             <h2 class="text-2xl font-orbitron text-gold mb-4">PLANO PREMIUM</h2>
             <p class="text-3xl font-bold text-gold mb-4">R$ 89,90 / mês</p>
-            <ul class="text-sm text-gray-300 mb-6 space-y-2">
-                <li>✅ Acesso a TODOS os jogos</li>
-                <li>✅ 35 minutos de teste grátis antes da compra</li>
+            <ul class="text-sm text-gray-300 mb-6 space-y-2 text-left">
+                <li>✅ Acesso a TODOS os 25+ jogos</li>
+                <li>✅ 19 estratégias de I.A</li>
+                <li>✅ Sinais manuais e automáticos</li>
+                <li>✅ Análise Especial com 12 fatores</li>
+                <li>✅ Top 5 jogos em tempo real</li>
+                <li>✅ 35 minutos de teste grátis</li>
             </ul>
-            <button onclick="openPaymentModal()" class="bg-cyber text-primary-bg px-6 py-3 rounded-lg font-bold hover:glow-cyber transition-all pulse-neon cursor-pointer">
-                ASSINAR AGORA
-            </button>
+            <button onclick="openPaymentModal()" class="bg-cyber text-primary-bg px-6 py-3 rounded-lg font-bold hover:glow-cyber transition-all pulse-neon cursor-pointer">ASSINAR AGORA</button>
         </div>
     </section>
 
@@ -337,260 +279,56 @@
         <div class="payment-modal-content" onclick="event.stopPropagation()">
             <div class="glassmorphism rounded-lg p-6 mb-6">
                 <div class="flex items-center justify-between mb-6">
-                    <h2 class="text-3xl font-orbitron text-gold glow-gold">Área de Pagamento</h2>
-                    <button onclick="closePaymentModal()" class="text-cyber hover:text-gold text-2xl font-bold transition-colors">×</button>
+                    <h2 class="text-2xl font-orbitron text-gold">Área de Pagamento</h2>
+                    <button onclick="closePaymentModal()" class="text-cyber hover:text-gold text-2xl font-bold">×</button>
                 </div>
-                
-                <!-- Resumo do Pedido -->
-                <div class="glassmorphism rounded-lg p-6 mb-6">
-                    <h3 class="text-xl font-orbitron text-cyber mb-4">Resumo do Pedido</h3>
-                    <div class="space-y-3">
-                        <div class="flex justify-between items-center">
-                            <span class="text-gray-300">Plano Premium - Mensal</span>
-                            <span class="text-white font-bold">R$ 89,90</span>
+                <div class="glassmorphism rounded-lg p-4 mb-6">
+                    <div class="flex justify-between items-center"><span class="text-gray-300">Plano Premium - Mensal</span><span class="text-white font-bold">R$ 89,90</span></div>
+                </div>
+                <div class="space-y-4">
+                    <!-- PIX -->
+                    <div class="payment-method glassmorphism rounded-lg p-5 cursor-pointer" data-method="pix" onclick="selectPaymentMethod('pix')">
+                        <div class="flex items-center gap-4"><div class="text-3xl">💳</div><div><h4 class="text-lg font-orbitron text-cyber">PIX</h4><p class="text-xs text-gray-400">Pagamento instantâneo</p></div></div>
+                        <div id="modal-pix-details" class="hidden mt-4 pt-4 border-t border-cyber/20">
+                            <label class="block text-sm text-gray-400 mb-2">Chave PIX (E-mail)</label>
+                            <div class="flex gap-2 mb-3"><input type="text" id="modal-pix-key" value="alexandre-tech@jim.com" readonly class="flex-1 bg-black/30 border border-cyber/30 rounded-lg px-3 py-2 text-cyber font-mono text-sm"><button onclick="copyToClipboard('modal-pix-key',this)" class="copy-btn bg-cyber text-primary-bg px-3 py-2 rounded-lg font-bold">Copiar</button></div>
+                            <p class="text-xs text-gray-400 mb-3">1. Copie a chave · 2. Pague R$ 89,90 · 3. Envie comprovante:</p>
+                            <a href="https://t.me/Alexandre_tech" target="_blank" class="block w-full bg-cyber text-primary-bg text-center py-2 rounded-lg font-bold pulse-neon">Enviar Comprovante</a>
                         </div>
-                        <div class="flex justify-between items-center pt-3 border-t border-cyber/20">
-                            <span class="text-lg font-orbitron text-cyber">Total</span>
-                            <span class="text-xl font-bold text-gold">R$ 89,90</span>
+                    </div>
+                    <!-- Cartão -->
+                    <div class="payment-method glassmorphism rounded-lg p-5 cursor-pointer" data-method="card" onclick="selectPaymentMethod('card')">
+                        <div class="flex items-center gap-4"><div class="text-3xl">💳</div><div><h4 class="text-lg font-orbitron text-cyber">Cartão de Crédito</h4><p class="text-xs text-gray-400">Até 12x sem juros</p></div></div>
+                        <div id="modal-card-details" class="hidden mt-4 pt-4 border-t border-cyber/20">
+                            <a href="https://pay.infinitepay.io/alexandre-tech/VC1DLTAtUg-LiyoKZt2F-89,90" target="_blank" class="block w-full bg-cyber text-primary-bg text-center py-2 rounded-lg font-bold pulse-neon">Pagar com Cartão</a>
+                        </div>
+                    </div>
+                    <!-- Revolut -->
+                    <div class="payment-method glassmorphism rounded-lg p-5 cursor-pointer" data-method="revolut" onclick="selectPaymentMethod('revolut')">
+                        <div class="flex items-center gap-4"><div class="text-3xl">🌍</div><div><h4 class="text-lg font-orbitron text-cyber">Revolut</h4><p class="text-xs text-gray-400">Internacional — R$ 114,90</p></div></div>
+                        <div id="modal-revolut-details" class="hidden mt-4 pt-4 border-t border-cyber/20">
+                            <div class="flex gap-2 mb-3"><input type="text" id="modal-revolut-link" value="https://revolut.me/alexanl1jp" readonly class="flex-1 bg-black/30 border border-cyber/30 rounded-lg px-3 py-2 text-cyber font-mono text-sm"><button onclick="copyToClipboard('modal-revolut-link',this)" class="copy-btn bg-cyber text-primary-bg px-3 py-2 rounded-lg font-bold">Copiar</button></div>
+                            <a href="https://revolut.me/alexanl1jp" target="_blank" class="block w-full bg-cyber text-primary-bg text-center py-2 rounded-lg font-bold pulse-neon">Pagar via Revolut</a>
+                        </div>
+                    </div>
+                    <!-- PayPal -->
+                    <div class="payment-method glassmorphism rounded-lg p-5 cursor-pointer" data-method="paypal" onclick="selectPaymentMethod('paypal')">
+                        <div class="flex items-center gap-4"><div class="text-3xl">🌐</div><div><h4 class="text-lg font-orbitron text-cyber">PayPal</h4><p class="text-xs text-gray-400">Internacional — R$ 114,90</p></div></div>
+                        <div id="modal-paypal-details" class="hidden mt-4 pt-4 border-t border-cyber/20">
+                            <div class="flex gap-2 mb-3"><input type="text" id="modal-paypal-email" value="alexandredepcerqueira19@gmail.com" readonly class="flex-1 bg-black/30 border border-cyber/30 rounded-lg px-3 py-2 text-cyber font-mono text-sm"><button onclick="copyToClipboard('modal-paypal-email',this)" class="copy-btn bg-cyber text-primary-bg px-3 py-2 rounded-lg font-bold">Copiar</button></div>
+                            <a href="https://t.me/Alexandre_tech" target="_blank" class="block w-full bg-cyber text-primary-bg text-center py-2 rounded-lg font-bold pulse-neon">Enviar Comprovante</a>
+                        </div>
+                    </div>
+                    <!-- Skrill -->
+                    <div class="payment-method glassmorphism rounded-lg p-5 cursor-pointer" data-method="skrill" onclick="selectPaymentMethod('skrill')">
+                        <div class="flex items-center gap-4"><div class="text-3xl">💼</div><div><h4 class="text-lg font-orbitron text-cyber">Skrill</h4><p class="text-xs text-gray-400">Internacional — R$ 119,90</p></div></div>
+                        <div id="modal-skrill-details" class="hidden mt-4 pt-4 border-t border-cyber/20">
+                            <div class="flex gap-2 mb-3"><input type="text" id="modal-skrill-email" value="alexandredepaulacerqueira@gmail.com" readonly class="flex-1 bg-black/30 border border-cyber/30 rounded-lg px-3 py-2 text-cyber font-mono text-sm"><button onclick="copyToClipboard('modal-skrill-email',this)" class="copy-btn bg-cyber text-primary-bg px-3 py-2 rounded-lg font-bold">Copiar</button></div>
+                            <a href="https://t.me/Alexandre_tech" target="_blank" class="block w-full bg-cyber text-primary-bg text-center py-2 rounded-lg font-bold pulse-neon">Enviar Comprovante</a>
                         </div>
                     </div>
                 </div>
-
-                <!-- Métodos de Pagamento -->
-                <div class="glassmorphism rounded-lg p-6 mb-6">
-                    <h3 class="text-xl font-orbitron text-cyber mb-6">Escolha a Forma de Pagamento</h3>
-                    
-                    <div class="space-y-4">
-                        <!-- PIX -->
-                        <div class="payment-method glassmorphism rounded-lg p-6 cursor-pointer" data-method="pix" onclick="selectPaymentMethod('pix')">
-                            <div class="flex items-center justify-between mb-4">
-                                <div class="flex items-center gap-4">
-                                    <div class="text-4xl">💳</div>
-                                    <div>
-                                        <h4 class="text-xl font-orbitron text-cyber">PIX</h4>
-                                        <p class="text-sm text-gray-400">Pagamento instantâneo</p>
-                                    </div>
-                                </div>
-                                <div class="w-6 h-6 rounded-full border-2 border-cyber flex items-center justify-center payment-radio" data-method="pix">
-                                    <div class="w-3 h-3 rounded-full bg-cyber hidden"></div>
-                                </div>
-                            </div>
-                            <div id="modal-pix-details" class="hidden mt-4 pt-4 border-t border-cyber/20">
-                                <div class="space-y-4">
-                                    <div>
-                                        <label class="block text-sm text-gray-400 mb-2">Chave PIX (E-mail)</label>
-                                        <div class="flex gap-2">
-                                            <input type="text" id="modal-pix-key" value="alexandre-tech@jim.com" readonly class="flex-1 bg-black/30 border border-cyber/30 rounded-lg px-4 py-3 text-cyber font-mono text-sm">
-                                            <button onclick="copyToClipboard('modal-pix-key', this)" class="copy-btn bg-cyber text-primary-bg px-4 py-3 rounded-lg font-bold hover:glow-cyber">
-                                                Copiar
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div class="bg-black/20 rounded-lg p-4 border border-cyber/20">
-                                        <p class="text-sm text-gray-300 mb-2">📋 <strong>Instruções:</strong></p>
-                                        <ol class="text-sm text-gray-400 space-y-1 list-decimal list-inside">
-                                            <li>Copie a chave PIX acima</li>
-                                            <li>Abra seu app de banco e faça o pagamento</li>
-                                            <li>Envie o comprovante para: <a href="https://t.me/Alexandre_tech" target="_blank" class="text-cyber hover:text-gold underline">@Alexandre_tech no Telegram</a></li>
-                                        </ol>
-                                    </div>
-                                    <a href="https://t.me/Alexandre_tech" target="_blank" class="block w-full bg-cyber text-primary-bg text-center py-3 rounded-lg font-bold hover:glow-cyber transition-all pulse-neon">
-                                        Enviar Comprovante via Telegram
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Cartão de Crédito -->
-                        <div class="payment-method glassmorphism rounded-lg p-6 cursor-pointer" data-method="card" onclick="selectPaymentMethod('card')">
-                            <div class="flex items-center justify-between mb-4">
-                                <div class="flex items-center gap-4">
-                                    <div class="text-4xl">💳</div>
-                                    <div>
-                                        <h4 class="text-xl font-orbitron text-cyber">Cartão de Crédito</h4>
-                                        <p class="text-sm text-gray-400">Até 12x sem juros</p>
-                                    </div>
-                                </div>
-                                <div class="w-6 h-6 rounded-full border-2 border-cyber flex items-center justify-center payment-radio" data-method="card">
-                                    <div class="w-3 h-3 rounded-full bg-cyber hidden"></div>
-                                </div>
-                            </div>
-                            <div id="modal-card-details" class="hidden mt-4 pt-4 border-t border-cyber/20">
-                                <a href="https://pay.infinitepay.io/alexandre-tech/VC1DLTAtUg-LiyoKZt2F-89,90" target="_blank" class="block w-full bg-cyber text-primary-bg text-center py-3 rounded-lg font-bold hover:glow-cyber transition-all pulse-neon">
-                                    Pagar com Cartão de Crédito
-                                </a>
-                                <p class="text-xs text-gray-400 text-center mt-2">Você será redirecionado para uma página segura de pagamento</p>
-                            </div>
-                        </div>
-
-                        <!-- Revolut -->
-                        <div class="payment-method glassmorphism rounded-lg p-6 cursor-pointer" data-method="revolut" onclick="selectPaymentMethod('revolut')">
-                            <div class="flex items-center justify-between mb-4">
-                                <div class="flex items-center gap-4">
-                                    <div class="text-4xl">🌍</div>
-                                    <div>
-                                        <h4 class="text-xl font-orbitron text-cyber">Revolut</h4>
-                                        <p class="text-sm text-gray-400">Pagamento Internacional</p>
-                                    </div>
-                                </div>
-                                <div class="w-6 h-6 rounded-full border-2 border-cyber flex items-center justify-center payment-radio" data-method="revolut">
-                                    <div class="w-3 h-3 rounded-full bg-cyber hidden"></div>
-                                </div>
-                            </div>
-                            <div id="modal-revolut-details" class="hidden mt-4 pt-4 border-t border-cyber/20">
-                                <div class="space-y-4">
-                                    <div class="bg-black/20 rounded-lg p-4 border border-cyber/20">
-                                        <div class="flex justify-between items-center mb-2">
-                                            <span class="text-gray-300">Valor do Plano:</span>
-                                            <span class="text-white">R$ 89,90</span>
-                                        </div>
-                                        <div class="flex justify-between items-center mb-2">
-                                            <span class="text-gray-300">Taxa Internacional:</span>
-                                            <span class="text-cyber">+ R$ 25,00</span>
-                                        </div>
-                                        <div class="flex justify-between items-center pt-2 border-t border-cyber/20">
-                                            <span class="font-bold text-gold">Total a Pagar:</span>
-                                            <span class="text-xl font-bold text-gold">R$ 114,90</span>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm text-gray-400 mb-2">Link Revolut</label>
-                                        <div class="flex gap-2">
-                                            <input type="text" id="modal-revolut-link" value="https://revolut.me/alexanl1jp" readonly class="flex-1 bg-black/30 border border-cyber/30 rounded-lg px-4 py-3 text-cyber font-mono text-sm">
-                                            <button onclick="copyToClipboard('modal-revolut-link', this)" class="copy-btn bg-cyber text-primary-bg px-4 py-3 rounded-lg font-bold hover:glow-cyber">
-                                                Copiar
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <a href="https://revolut.me/alexanl1jp" target="_blank" class="block w-full bg-cyber text-primary-bg text-center py-3 rounded-lg font-bold hover:glow-cyber transition-all pulse-neon">
-                                        Pagar via Revolut (R$ 114,90)
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- PayPal -->
-                        <div class="payment-method glassmorphism rounded-lg p-6 cursor-pointer" data-method="paypal" onclick="selectPaymentMethod('paypal')">
-                            <div class="flex items-center justify-between mb-4">
-                                <div class="flex items-center gap-4">
-                                    <div class="text-4xl">🌐</div>
-                                    <div>
-                                        <h4 class="text-xl font-orbitron text-cyber">PayPal</h4>
-                                        <p class="text-sm text-gray-400">Pagamento Internacional</p>
-                                    </div>
-                                </div>
-                                <div class="w-6 h-6 rounded-full border-2 border-cyber flex items-center justify-center payment-radio" data-method="paypal">
-                                    <div class="w-3 h-3 rounded-full bg-cyber hidden"></div>
-                                </div>
-                            </div>
-                            <div id="modal-paypal-details" class="hidden mt-4 pt-4 border-t border-cyber/20">
-                                <div class="space-y-4">
-                                    <div class="bg-black/20 rounded-lg p-4 border border-cyber/20">
-                                        <div class="flex justify-between items-center mb-2">
-                                            <span class="text-gray-300">Valor do Plano:</span>
-                                            <span class="text-white">R$ 89,90</span>
-                                        </div>
-                                        <div class="flex justify-between items-center mb-2">
-                                            <span class="text-gray-300">Taxa PayPal:</span>
-                                            <span class="text-cyber">+ R$ 25,00</span>
-                                        </div>
-                                        <div class="flex justify-between items-center pt-2 border-t border-cyber/20">
-                                            <span class="font-bold text-gold">Total a Pagar:</span>
-                                            <span class="text-xl font-bold text-gold">R$ 114,90</span>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm text-gray-400 mb-2">E-mail PayPal</label>
-                                        <div class="flex gap-2">
-                                            <input type="text" id="modal-paypal-email" value="alexandredepcerqueira19@gmail.com" readonly class="flex-1 bg-black/30 border border-cyber/30 rounded-lg px-4 py-3 text-cyber font-mono text-sm">
-                                            <button onclick="copyToClipboard('modal-paypal-email', this)" class="copy-btn bg-cyber text-primary-bg px-4 py-3 rounded-lg font-bold hover:glow-cyber">
-                                                Copiar
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div class="bg-black/20 rounded-lg p-4 border border-cyber/20">
-                                        <p class="text-sm text-gray-300 mb-2">📋 <strong>Instruções:</strong></p>
-                                        <ol class="text-sm text-gray-400 space-y-1 list-decimal list-inside">
-                                            <li>Faça login no PayPal</li>
-                                            <li>Envie o pagamento para o e-mail acima: <strong class="text-cyber">alexandredepcerqueira19@gmail.com</strong></li>
-                                            <li>Valor a enviar: <strong class="text-gold">R$ 114,90</strong></li>
-                                            <li>Envie o comprovante para: <a href="https://t.me/Alexandre_tech" target="_blank" class="text-cyber hover:text-gold underline">@Alexandre_tech no Telegram</a></li>
-                                        </ol>
-                                    </div>
-                                    <a href="https://t.me/Alexandre_tech" target="_blank" class="block w-full bg-cyber text-primary-bg text-center py-3 rounded-lg font-bold hover:glow-cyber transition-all pulse-neon">
-                                        Enviar Comprovante via Telegram
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Skrill -->
-                        <div class="payment-method glassmorphism rounded-lg p-6 cursor-pointer" data-method="skrill" onclick="selectPaymentMethod('skrill')">
-                            <div class="flex items-center justify-between mb-4">
-                                <div class="flex items-center gap-4">
-                                    <div class="text-4xl">💼</div>
-                                    <div>
-                                        <h4 class="text-xl font-orbitron text-cyber">Skrill</h4>
-                                        <p class="text-sm text-gray-400">Pagamento Internacional</p>
-                                    </div>
-                                </div>
-                                <div class="w-6 h-6 rounded-full border-2 border-cyber flex items-center justify-center payment-radio" data-method="skrill">
-                                    <div class="w-3 h-3 rounded-full bg-cyber hidden"></div>
-                                </div>
-                            </div>
-                            <div id="modal-skrill-details" class="hidden mt-4 pt-4 border-t border-cyber/20">
-                                <div class="space-y-4">
-                                    <div class="bg-black/20 rounded-lg p-4 border border-cyber/20">
-                                        <div class="flex justify-between items-center mb-2">
-                                            <span class="text-gray-300">Valor do Plano:</span>
-                                            <span class="text-white">R$ 89,90</span>
-                                        </div>
-                                        <div class="flex justify-between items-center mb-2">
-                                            <span class="text-gray-300">Taxa Skrill:</span>
-                                            <span class="text-cyber">+ R$ 30,00</span>
-                                        </div>
-                                        <div class="flex justify-between items-center pt-2 border-t border-cyber/20">
-                                            <span class="font-bold text-gold">Total a Pagar:</span>
-                                            <span class="text-xl font-bold text-gold">R$ 119,90</span>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm text-gray-400 mb-2">E-mail Skrill</label>
-                                        <div class="flex gap-2">
-                                            <input type="text" id="modal-skrill-email" value="alexandredepaulacerqueira@gmail.com" readonly class="flex-1 bg-black/30 border border-cyber/30 rounded-lg px-4 py-3 text-cyber font-mono text-sm">
-                                            <button onclick="copyToClipboard('modal-skrill-email', this)" class="copy-btn bg-cyber text-primary-bg px-4 py-3 rounded-lg font-bold hover:glow-cyber">
-                                                Copiar
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div class="bg-black/20 rounded-lg p-4 border border-cyber/20">
-                                        <p class="text-sm text-gray-300 mb-2">📋 <strong>Instruções:</strong></p>
-                                        <ol class="text-sm text-gray-400 space-y-1 list-decimal list-inside">
-                                            <li>Faça login no Skrill</li>
-                                            <li>Envie o pagamento para o e-mail acima: <strong class="text-cyber">alexandredepaulacerqueira@gmail.com</strong></li>
-                                            <li>Valor a enviar: <strong class="text-gold">R$ 119,90</strong></li>
-                                            <li>Envie o comprovante para: <a href="https://t.me/Alexandre_tech" target="_blank" class="text-cyber hover:text-gold underline">@Alexandre_tech no Telegram</a></li>
-                                        </ol>
-                                    </div>
-                                    <a href="https://t.me/Alexandre_tech" target="_blank" class="block w-full bg-cyber text-primary-bg text-center py-3 rounded-lg font-bold hover:glow-cyber transition-all pulse-neon">
-                                        Enviar Comprovante via Telegram
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Informações de Segurança -->
-                <div class="glassmorphism rounded-lg p-6">
-                    <div class="flex items-start gap-4">
-                        <div class="text-3xl">🔒</div>
-                        <div>
-                            <h4 class="text-lg font-orbitron text-cyber mb-2">Pagamento Seguro</h4>
-                            <p class="text-sm text-gray-400">Todos os pagamentos são processados de forma segura. Seus dados estão protegidos.</p>
-                        </div>
-                    </div>
-                </div>
+                <div class="mt-6 glassmorphism rounded-lg p-4 flex items-center gap-3"><div class="text-2xl">🔒</div><p class="text-xs text-gray-400">Pagamento seguro. Seus dados estão protegidos.</p></div>
             </div>
         </div>
     </div>
@@ -600,272 +338,58 @@
         <div class="strategies-modal-content" onclick="event.stopPropagation()">
             <div class="glassmorphism rounded-lg p-4 sm:p-6">
                 <div class="flex items-center justify-between mb-6">
-                    <h2 class="text-2xl sm:text-3xl font-orbitron text-gold glow-gold">📚 Como Funcionam as Estratégias</h2>
-                    <button onclick="closeStrategiesModal()" class="text-cyber hover:text-gold text-3xl font-bold transition-colors">×</button>
+                    <h2 class="text-xl sm:text-2xl font-orbitron text-gold">📚 Estratégias</h2>
+                    <button onclick="closeStrategiesModal()" class="text-cyber hover:text-gold text-3xl font-bold">×</button>
                 </div>
-                
-                <div class="space-y-4 text-sm sm:text-base">
-                    <div class="glassmorphism rounded-lg p-4 border-l-4 border-cyber">
-                        <h3 class="font-orbitron text-cyber mb-2 text-base sm:text-lg">📈 Números</h3>
-                        <p class="text-gray-300 leading-relaxed">Analisa quais números saem mais vezes em cada cor. Quando um número volta a sair, prediz a cor que tem maior frequência histórica para aquele número.</p>
-                    </div>
-
-                    <div class="glassmorphism rounded-lg p-4 border-l-4 border-cyber">
-                        <h3 class="font-orbitron text-cyber mb-2 text-base sm:text-lg">🎨 Padrões de Cores</h3>
-                        <p class="text-gray-300 leading-relaxed">Observa sequências de cores recentes. Se padrões como V-A-V-A aparecem repetidamente, prediz qual cor quebra esse padrão.</p>
-                    </div>
-
-                    <div class="glassmorphism rounded-lg p-4 border-l-4 border-cyber">
-                        <h3 class="font-orbitron text-cyber mb-2 text-base sm:text-lg">🧠 Neural</h3>
-                        <p class="text-gray-300 leading-relaxed">Combina 4 fatores simultâneos: padrões numéricos, frequência de cores, momentum (tendência) e intervalo entre repetições. Cada fator vota, e o sinal só sai se houver consenso.</p>
-                    </div>
-
-                    <div class="glassmorphism rounded-lg p-4 border-l-4 border-cyber">
-                        <h3 class="font-orbitron text-cyber mb-2 text-base sm:text-lg">🤝 Consenso</h3>
-                        <p class="text-gray-300 leading-relaxed">Combina Números + Cores. Só gera sinal quando AMBAS estratégias concordam na mesma cor. Mais seguro, menos sinais, mas mais precisão.</p>
-                    </div>
-
-                    <div class="glassmorphism rounded-lg p-4 border-l-4 border-cyber">
-                        <h3 class="font-orbitron text-cyber mb-2 text-base sm:text-lg">🎯 Adaptativa</h3>
-                        <p class="text-gray-300 leading-relaxed">Análise multi-fatorial customizada por jogo. Cada jogo tem seus próprios fatores de análise (até 12 fatores diferentes). Sistema inteligente que se adapta ao comportamento de cada jogo.</p>
-                    </div>
-
-                    <div class="glassmorphism rounded-lg p-4 border-l-4 border-cyber">
-                        <h3 class="font-orbitron text-cyber mb-2 text-base sm:text-lg">🔄 Matriz de Transição</h3>
-                        <p class="text-gray-300 leading-relaxed">Mapeia probabilidade de transição entre cores (V→A, A→V, etc). Se V aparece 68% das vezes seguido de A, prediz A quando V sai.</p>
-                    </div>
-
-                    <div class="glassmorphism rounded-lg p-4 border-l-4 border-cyber">
-                        <h3 class="font-orbitron text-cyber mb-2 text-base sm:text-lg">🔄 Recorrência</h3>
-                        <p class="text-gray-300 leading-relaxed">Busca a última vez que o número exato saiu na cor exata. Se após aquela ocorrência veio cor X, prediz cor X novamente.</p>
-                    </div>
-
-                    <div class="glassmorphism rounded-lg p-4 border-l-4 border-cyber">
-                        <h3 class="font-orbitron text-cyber mb-2 text-base sm:text-lg">🔢 Posição Ciclada</h3>
-                        <p class="text-gray-300 leading-relaxed">Divide histórico em zonas de 20 resultados. Mapeia qual cor cada número prefere em cada zona. Prediz baseado na zona atual. Explora ciclos naturais do jogo.</p>
-                    </div>
-
-                    <div class="glassmorphism rounded-lg p-4 border-l-4 border-cyber">
-                        <h3 class="font-orbitron text-cyber mb-2 text-base sm:text-lg">⚡️ Estratégia Gale 1</h3>
-                        <p class="text-gray-300 leading-relaxed">Modo especial: observa silenciosamente o resultado SG (primeira entrada). Se SG acertar = não envia nada. Se SG errar = envia sinal para entrar em G1.</p>
-                    </div>
+                <div class="space-y-3 text-sm">
+                    <div class="glassmorphism rounded-lg p-3 border-l-4 border-cyber"><h3 class="font-orbitron text-cyber mb-1 text-sm">📈 Números</h3><p class="text-gray-300 text-xs">Analisa quais números saem mais em cada cor. Quando volta a sair, prediz a cor mais frequente.</p></div>
+                    <div class="glassmorphism rounded-lg p-3 border-l-4 border-cyber"><h3 class="font-orbitron text-cyber mb-1 text-sm">🎨 Padrões de Cores</h3><p class="text-gray-300 text-xs">Observa sequências de cores. Detecta padrões repetitivos e prediz a próxima.</p></div>
+                    <div class="glassmorphism rounded-lg p-3 border-l-4 border-cyber"><h3 class="font-orbitron text-cyber mb-1 text-sm">🧠 Neural</h3><p class="text-gray-300 text-xs">4 fatores simultâneos: padrões, frequência, momentum e intervalo. Só sai sinal com consenso.</p></div>
+                    <div class="glassmorphism rounded-lg p-3 border-l-4 border-cyber"><h3 class="font-orbitron text-cyber mb-1 text-sm">🤝 Consenso</h3><p class="text-gray-300 text-xs">Combina Números + Cores. Só sinaliza quando ambas concordam. Mais seguro.</p></div>
+                    <div class="glassmorphism rounded-lg p-3 border-l-4 border-cyber"><h3 class="font-orbitron text-cyber mb-1 text-sm">🧠 I.A Adaptativa</h3><p class="text-gray-300 text-xs">Multi-fatorial customizada por jogo. Até 12 fatores diferentes por jogo.</p></div>
+                    <div class="glassmorphism rounded-lg p-3 border-l-4 border-cyber"><h3 class="font-orbitron text-cyber mb-1 text-sm">🔄 Matriz de Transição</h3><p class="text-gray-300 text-xs">Mapeia probabilidade de transição entre cores (V→A, A→V).</p></div>
+                    <div class="glassmorphism rounded-lg p-3 border-l-4 border-cyber"><h3 class="font-orbitron text-cyber mb-1 text-sm">🔄 Recorrência</h3><p class="text-gray-300 text-xs">Busca última ocorrência do mesmo número+cor e vê o que veio depois.</p></div>
+                    <div class="glassmorphism rounded-lg p-3 border-l-4 border-cyber"><h3 class="font-orbitron text-cyber mb-1 text-sm">🛣️ Roads / Number Roads</h3><p class="text-gray-300 text-xs">Análise de streaks, alternâncias e padrões de estrada.</p></div>
+                    <div class="glassmorphism rounded-lg p-3 border-l-4 border-cyber"><h3 class="font-orbitron text-cyber mb-1 text-sm">📐 Grades (4 tipos)</h3><p class="text-gray-300 text-xs">Diagonal, Espelho, Repetição e Adjacente — detectam padrões em grade numérica.</p></div>
+                    <div class="glassmorphism rounded-lg p-3 border-l-4 border-cyber"><h3 class="font-orbitron text-cyber mb-1 text-sm">♾️ Infinity</h3><p class="text-gray-300 text-xs">Estratégia avançada com análise contínua e adaptativa.</p></div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Contato - Botões Flutuantes -->
+    <!-- Botões Flutuantes -->
     <div class="fixed bottom-4 right-4 flex flex-col gap-3 z-50">
-        <a href="https://t.me/alexandredicefree" target="_blank" class="bg-gold hover:bg-gold/80 text-primary-bg p-3 sm:p-4 rounded-full glow-gold hover:glow-gold transition-all text-xs sm:text-sm font-bold flex items-center gap-2" title="Grupo Free">
-            <span>🎯</span>
-            <span class="hidden sm:inline">Free</span>
-        </a>
-        <a href="https://t.me/alexandre_tech" target="_blank" class="bg-cyber text-primary-bg p-3 sm:p-4 rounded-full glow-cyber hover:glow-cyber transition-all" title="Contato">
-            <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.161c-.18.717-.962 4.093-1.362 5.426-.168.562-.378.7-.584.715-.406.03-.711-.24-.711-.24s-.106-.08-.331-.497c-.411-.814-1.123-2.592-1.123-2.592s-.08-.24-.24-.12c-.16.12-.12.24-.12.24l.24 2.592c.04.24.04.48-.12.72-.16.24-.48.12-.48.12l-1.683-.84s-.24-.12-.48 0c-.24.12-.12.36-.12.36s.841 1.683 1.441 2.522c.6.84 1.321 1.081 1.321 1.081s.24.12.36 0c.12-.12.08-.36.08-.36s-.04-.72-.36-1.441c-.32-.721-.841-1.441-.841-1.441s-.08-.24-.24-.12c-.16.12-.12.24-.12.24l.841 1.441c.16.24.24.36.48.24.24-.12.24-.36.24-.36l-.24-2.592c-.04-.24-.04-.48.12-.72.16-.24.48-.12.48-.12l1.683.84s.24.12.48 0c.24-.12.12-.36.12-.36z"/>
-            </svg>
-        </a>
+        <a href="https://t.me/alexandredicefree" target="_blank" class="bg-gold hover:bg-gold/80 text-primary-bg p-3 rounded-full glow-gold transition-all text-xs font-bold flex items-center gap-2" title="Grupo Free"><span>🎯</span><span class="hidden sm:inline">Free</span></a>
+        <a href="https://t.me/alexandre_tech" target="_blank" class="bg-cyber text-primary-bg p-3 rounded-full glow-cyber transition-all" title="Contato"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.161c-.18 1.897-.962 6.502-1.359 8.627-.168.9-.5 1.201-.82 1.23-.697.064-1.226-.461-1.901-.903-1.056-.692-1.653-1.123-2.678-1.799-1.185-.781-.417-1.21.258-1.911.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.479.33-.913.492-1.302.484-.429-.008-1.252-.242-1.865-.442-.751-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.831-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg></a>
     </div>
 
-    <!-- JavaScript for Animations -->
+    <!-- JavaScript -->
     <script>
-        // Code Rain Animation (Matrix/Hacker Effect)
-        (function() {
-            const canvas = document.getElementById('codeCanvas');
-            const ctx = canvas.getContext('2d');
-            
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            
-            // Caracteres para o código (hexadecimais, números, símbolos)
-            const chars = '0123456789ABCDEF<>{}[]()&|^%$#@!~`+-=*/_.,;:?';
-            const charArray = chars.split('');
-            
-            const fontSize = 14;
-            const columns = canvas.width / fontSize;
-            const drops = [];
-            
-            // Inicializa as colunas
-            for (let x = 0; x < columns; x++) {
-                drops[x] = Math.random() * -100;
-            }
-            
-            function draw() {
-                // Sobreposição semi-transparente para efeito de rastro
-                ctx.fillStyle = 'rgba(5, 5, 5, 0.04)';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-                
-                // Cores cyber (ciano) e dourado
-                const colors = ['#00f2ff', '#d4af37', '#00ff88', '#ffffff'];
-                
-                ctx.font = fontSize + 'px monospace';
-                
-                for (let i = 0; i < drops.length; i++) {
-                    // Texto aleatório
-                    const text = charArray[Math.floor(Math.random() * charArray.length)];
-                    
-                    // Cor aleatória (mais ciano, menos dourado)
-                    const colorIndex = Math.random() > 0.8 ? 1 : (Math.random() > 0.5 ? 0 : 2);
-                    ctx.fillStyle = colors[colorIndex];
-                    
-                    // Desenha o caractere
-                    ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-                    
-                    // Reseta a gota quando ela atinge o fundo
-                    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-                        drops[i] = 0;
-                    }
-                    
-                    // Move a gota para baixo
-                    drops[i]++;
-                }
-            }
-            
-            // Ajusta canvas quando redimensiona a janela
-            window.addEventListener('resize', () => {
-                canvas.width = window.innerWidth;
-                canvas.height = window.innerHeight;
-                const newColumns = canvas.width / fontSize;
-                drops.length = 0;
-                for (let x = 0; x < newColumns; x++) {
-                    drops[x] = Math.random() * -100;
-                }
-            });
-            
-            // Inicia a animação
-            setInterval(draw, 50);
-        })();
+        // Code Rain
+        (function(){const c=document.getElementById('codeCanvas'),x=c.getContext('2d');c.width=window.innerWidth;c.height=window.innerHeight;const chars='0123456789ABCDEF<>{}[]&|^%$#@!',ca=chars.split(''),fs=14,cols=c.width/fs,drops=[];for(let i=0;i<cols;i++)drops[i]=Math.random()*-100;function draw(){x.fillStyle='rgba(5,5,5,0.04)';x.fillRect(0,0,c.width,c.height);const colors=['#00f2ff','#d4af37','#00ff88'];x.font=fs+'px monospace';for(let i=0;i<drops.length;i++){x.fillStyle=colors[Math.floor(Math.random()*3)];x.fillText(ca[Math.floor(Math.random()*ca.length)],i*fs,drops[i]*fs);if(drops[i]*fs>c.height&&Math.random()>0.975)drops[i]=0;drops[i]++}}window.addEventListener('resize',()=>{c.width=window.innerWidth;c.height=window.innerHeight});setInterval(draw,50)})();
 
-        // Intersection Observer for fade-in animations
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
+        // Fade-in observer
+        const obs=new IntersectionObserver(e=>e.forEach(el=>{if(el.isIntersecting)el.target.classList.add('visible')}),{threshold:0.1});
+        document.querySelectorAll('.fade-in').forEach(el=>obs.observe(el));
 
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                }
-            });
-        }, observerOptions);
+        // Payment Modal
+        function openPaymentModal(){const m=document.getElementById('paymentModal');m.style.display='flex';m.classList.add('active');document.body.style.overflow='hidden'}
+        function closePaymentModal(){const m=document.getElementById('paymentModal');m.classList.remove('active');m.style.display='none';document.body.style.overflow=''}
+        function closePaymentModalOnBackdrop(e){if(e.target.id==='paymentModal')closePaymentModal()}
 
-        // Observe all elements with fade-in class
-        document.querySelectorAll('.fade-in').forEach(el => {
-            observer.observe(el);
-        });
+        // Strategies Modal
+        function openStrategiesModal(){const m=document.getElementById('strategiesModal');m.style.display='flex';m.classList.add('active');document.body.style.overflow='hidden'}
+        function closeStrategiesModal(){const m=document.getElementById('strategiesModal');m.classList.remove('active');m.style.display='none';document.body.style.overflow=''}
+        function closeStrategiesModalOnBackdrop(e){if(e.target.id==='strategiesModal')closeStrategiesModal()}
 
-        // Payment Modal Functions
-        function openPaymentModal() {
-            const modal = document.getElementById('paymentModal');
-            console.log('Abrindo modal...', modal);
-            if (modal) {
-                modal.style.display = 'flex';
-                modal.classList.add('active');
-                document.body.style.overflow = 'hidden';
-            } else {
-                alert('Modal não encontrado!');
-            }
-        }
+        // ESC key
+        document.addEventListener('keydown',e=>{if(e.key==='Escape'){closePaymentModal();closeStrategiesModal()}});
 
-        function closePaymentModal() {
-            const modal = document.getElementById('paymentModal');
-            modal.classList.remove('active');
-            modal.style.display = 'none';
-            document.body.style.overflow = '';
-        }
+        // Payment method selection
+        function selectPaymentMethod(method){const m=document.getElementById('paymentModal');m.querySelectorAll('.payment-method').forEach(el=>el.classList.remove('active'));m.querySelectorAll('[id^="modal-"][id$="-details"]').forEach(el=>el.classList.add('hidden'));const sel=m.querySelector(`[data-method="${method}"]`);sel.classList.add('active');document.getElementById(`modal-${method}-details`).classList.remove('hidden')}
 
-        function closePaymentModalOnBackdrop(event) {
-            if (event.target.id === 'paymentModal') {
-                closePaymentModal();
-            }
-        }
-
-        // Close modal with ESC key
-        document.addEventListener('keydown', function(event) {
-            if (event.key === 'Escape') {
-                closePaymentModal();
-                closeStrategiesModal();
-            }
-        });
-
-        // Strategies Modal Functions
-        function openStrategiesModal() {
-            const modal = document.getElementById('strategiesModal');
-            console.log('Abrindo modal de estratégias...', modal);
-            if (modal) {
-                modal.style.display = 'flex';
-                modal.classList.add('active');
-                document.body.style.overflow = 'hidden';
-            }
-        }
-
-        function closeStrategiesModal() {
-            const modal = document.getElementById('strategiesModal');
-            if (modal) {
-                modal.classList.remove('active');
-                modal.style.display = 'none';
-                document.body.style.overflow = '';
-            }
-        }
-
-        function closeStrategiesModalOnBackdrop(event) {
-            if (event.target.id === 'strategiesModal') {
-                closeStrategiesModal();
-            }
-        }
-
-        // Payment Method Selection
-        function selectPaymentMethod(method) {
-            // Remove active class from all methods
-            const modal = document.getElementById('paymentModal');
-            modal.querySelectorAll('.payment-method').forEach(el => {
-                el.classList.remove('active');
-            });
-            modal.querySelectorAll('.payment-radio div').forEach(el => {
-                el.classList.add('hidden');
-            });
-            modal.querySelectorAll('[id^="modal-"][id$="-details"]').forEach(el => {
-                el.classList.add('hidden');
-            });
-
-            // Add active class to selected method
-            const selectedMethod = modal.querySelector(`[data-method="${method}"]`);
-            selectedMethod.classList.add('active');
-            const radio = selectedMethod.querySelector('.payment-radio div');
-            radio.classList.remove('hidden');
-            const details = document.getElementById(`modal-${method}-details`);
-            details.classList.remove('hidden');
-        }
-
-        // Copy to Clipboard
-        function copyToClipboard(inputId, button) {
-            const input = document.getElementById(inputId);
-            input.select();
-            input.setSelectionRange(0, 99999); // For mobile devices
-            
-            navigator.clipboard.writeText(input.value).then(() => {
-                const originalText = button.textContent;
-                button.textContent = 'Copiado!';
-                button.classList.add('copied');
-                
-                setTimeout(() => {
-                    button.textContent = originalText;
-                    button.classList.remove('copied');
-                }, 2000);
-            }).catch(err => {
-                // Fallback for older browsers
-                document.execCommand('copy');
-                const originalText = button.textContent;
-                button.textContent = 'Copiado!';
-                button.classList.add('copied');
-                
-                setTimeout(() => {
-                    button.textContent = originalText;
-                    button.classList.remove('copied');
-                }, 2000);
-            });
-        }
+        // Copy
+        function copyToClipboard(id,btn){const inp=document.getElementById(id);navigator.clipboard.writeText(inp.value).then(()=>{btn.textContent='Copiado!';btn.classList.add('copied');setTimeout(()=>{btn.textContent='Copiar';btn.classList.remove('copied')},2000)})}
     </script>
 </body>
 </html>
